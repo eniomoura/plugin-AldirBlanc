@@ -12,12 +12,24 @@ class Plugin extends \MapasCulturais\Plugin
 {
     function __construct(array $config = [])
     {
+        // se for multisite pega do subsite_meta
+        if (App::i()->view->subsite){
+            $config = App::i()->view->subsite->aldir_blanc_config;
+        }
+
         $config += [
             'inciso1_enabled' => true,
             'inciso2_enabled' => true,
             'inciso1_opportunity_id' => null,
-            'inciso2_opportunity_ids' => [
-            ],
+            'inciso2_opportunity_ids' => [],
+            'inciso1_limite' => 1,
+            'inciso2_limite' => 1,
+            'inciso2_categories' => [
+                'espaco-formalizado' => 'Espaço formalizado',
+                'espaco-nao-formalizado' => 'Espaço não formalizado',
+                'coletivo-formalizado' => 'Coletivo formalizado',
+                'coletivo-nao-formalizado' => 'Coletivo não formalizado'
+            ]
         ];
        
         parent::__construct($config);
@@ -30,6 +42,7 @@ class Plugin extends \MapasCulturais\Plugin
         // enqueue scripts and styles
         $app->view->enqueueStyle('aldirblanc', 'app', 'aldirblanc/app.css');
         $app->view->assetManager->publishFolder('aldirblanc/img', 'aldirblanc/img');
+
         // add hooks
         $app->hook('mapasculturais.styles', function () use ($app) {
             $app->view->printStyles('aldirblanc');
@@ -43,6 +56,10 @@ class Plugin extends \MapasCulturais\Plugin
             $this->part('aldirblanc/subsite-tab-content');
         });
 
+        $app->hook('template(site.index.home-search):end', function () {
+            $this->part('aldirblanc/home-search');
+        });
+
         /**
          * modifica o template do autenticador quando o redirect url for para o plugin aldir blanc
          */
@@ -54,6 +71,27 @@ class Plugin extends \MapasCulturais\Plugin
                 $this->layout = 'aldirblanc';
             }
         });
+
+        $plugin = $this;
+
+        /**
+         * Na criação da inscrição, define os metadados inciso2_opportunity_id ou 
+         * inciso1_opportunity_id do agente responsável pela inscrição
+         */
+        $app->hook('entity(Registration).save:after', function() use ($plugin) {
+            
+            if(in_array($this->opportunity->id, $plugin->config['inciso2_opportunity_ids'])){
+                $agent = $this->owner;
+                $agent->aldirblanc_inciso2_registration = $this->id;
+                $agent->save(true);
+
+            } else if ($this->opportunity->id == $plugin->config['inciso1_opportunity_id']) {
+                $agent = $this->owner;
+                $agent->aldirblanc_inciso1_registration = $this->id;
+                $agent->save(true);
+            }
+        });
+        
     }
 
     /**
@@ -81,6 +119,12 @@ class Plugin extends \MapasCulturais\Plugin
                 'assistente-social' => i::__('Assistência Social'),
                 'solicitante' => i::__('Solicitante')
             ]
+        ]);
+
+        $this->registerMetadata('MapasCulturais\Entities\Registration', 'termos_aceitos', [
+            'label' => i::__('Aceite dos termos e condições'),
+            'type' => 'boolean',
+            'private' => true,
         ]);
 
         if($this->config['inciso1_enabled']){
