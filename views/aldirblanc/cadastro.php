@@ -2,7 +2,7 @@
 use MapasCulturais\i;
 use MapasCulturais\Entities\Registration;
 $inciso1Limite = $this->controller->config['inciso1_limite'];
-$inciso2Limite = $this->controller->config['inciso2_limite'];
+$inciso2Limite = 16666;
 $inciso2_enabled = $this->controller->config['inciso2_enabled'];
 $inciso1_enabled = $this->controller->config['inciso1_enabled'];
 
@@ -119,6 +119,8 @@ if(count($cidades) <= 1){
                 case 'select-cidade':
                     $('#select-cidade').hide();
                     $('#personalidade-juridica').fadeIn(1100);
+                    params.opportunity = null;
+                    $(".js-select-cidade").select2("val", "-1");
                     break;
             }
         });
@@ -175,7 +177,8 @@ if(count($cidades) <= 1){
                 $registrationUrl = $this->controller->createUrl('formulario',[$registration->id]);
                 switch ($registration->status) {
                     //caso seja do Inciso 2 e nao enviada (Rascunho)
-                    case $statusCodes[0]:
+                    case Registration::STATUS_DRAFT:
+                        //todo pegar nome do coletivo ou do espaço
                         $this->part('aldirblanc/cadastro/application-inciso2-draft',  ['registration' => $registration,'registrationUrl' => $registrationUrl,'niceName' => $niceName]);
                         break;
                     //caso seja do Inciso 2 e tenha sido enviada
