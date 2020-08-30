@@ -25,11 +25,10 @@ $_params = [
 
 ?>
 
-<?php $this->part('aldirblanc/editable-entity', array('entity'=>$entity, 'action'=>$action));  ?>
-
+<div id="editable-entity" class="clearfix sombra" >
+</div>
 <article class="main-content registration" ng-controller="OpportunityController">
-
-    <article>
+        <h1> Cadastro de pessoa física </h1>
         <?php $this->applyTemplateHook('form','begin'); ?>
         
         <?php $this->part('singles/registration-edit--header', $_params) ?>
@@ -38,10 +37,9 @@ $_params = [
         
         <?php $this->part('singles/registration-edit--fields', $_params) ?>
 
-        <?php $this->part('singles/registration-edit--send-button', $_params) ?>
+        <?php $this->part('aldirblanc/registration-edit--validate-button', $_params) ?>
         
         <?php $this->applyTemplateHook('form','end'); ?>
-    </article>
 
 </article>
 <?php $this->part('singles/registration--sidebar--left', $_params) ?>

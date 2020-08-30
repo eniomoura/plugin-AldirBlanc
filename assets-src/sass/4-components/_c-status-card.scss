@@ -1,0 +1,63 @@
+// Component schema (HTML schema for block usage)
+// <element class="status-card"> 
+//      <element class="status-card--title"> This is the opcional title </element>
+//      <element class="status-card--content"> This is the opcional content </element>
+// </element>
+
+.status-card {
+
+    @extend .card;
+    background-color: $brand-primary;
+    color: $light;
+    display: inline-block;
+    font-size: $font-size-base;
+    line-height: 1.4;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    padding: 20px 15px;
+    text-align: center;
+
+    &--primary,
+    &.status-1 {
+        @extend .status-card;
+        background-color: $theme-color-primary;
+    }
+
+    &--secondary,
+    &.status-10 {
+        @extend .status-card;
+        background-color: $theme-color-secondary;
+    }
+
+    &--tertiary,
+    &.status-2,
+    &.status-3 {
+        @extend .status-card;
+        background-color: $theme-color-tertiary;
+    }
+
+    &--quaternary,
+    &.status-8 {
+        @extend .status-card;
+        background-color: $theme-color-quaternary;
+    }
+
+    &--title {
+        color: $light;
+        font-size: $font-size-base;
+        font-weight: bold;
+        line-height: 1.4;
+        margin: 0 0 10px;
+        padding: 0;
+    }
+
+    &--content {
+        color: $light;
+        font-size: 14px;
+        font-family: $font-family-base;
+        line-height: 1.4;
+        margin: 0;
+        padding: 0;
+    }
+
+}
