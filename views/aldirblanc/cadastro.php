@@ -48,7 +48,7 @@ if (count($cidades) === 0) {
 
         function showModal(){
             var msg   = "";
-            var modal = $('#modalAlert');
+            var modal = $('#modalAlertCadastro');
             var coletivo   =  $('input[name=coletivo]:checked').siblings().find('.js-text').text();
             var fomalizado =  $('input[name=formalizado]:checked').siblings().find('.js-text').text();
 
@@ -57,12 +57,18 @@ if (count($cidades) === 0) {
 
             var nomeCidade =  $('.js-select-cidade option:selected').text();
 
-            modal.css("display", "flex").hide().fadeIn(1200);
-            $('.modal-content').find('.js-confirmar').show();
-            $('.modal-content').find('.js-title').text('Confirmação');
+            modal.css("display", "flex").hide().fadeIn(900);
+
+            $('#modalAlertCadastro .modal-content').find('.js-confirmar').show();
+            $('#modalAlertCadastro .modal-content').find('.js-title').text('Confirmação');
+
+
+            $('#modalAlertCadastro .modal-content').find('.btn').val('next');
+            $('#modalAlertCadastro .modal-content').find('.btn').text('<?php \MapasCulturais\i::_e("Confirmar"); ?>');
 
             if(params.opportunity != null){
-                msg = `<?php \MapasCulturais\i::_e("Você está solicitando o auxílio para <strong>_fomalizado_</strong> para espaço do tipo  <strong>_coletivo_</strong>_cidade_ <br><br><p>Você confirma essas informações?</p>"); ?>`;
+
+                msg = `<?php \MapasCulturais\i::_e("Você está solicitando o benefício para <strong>_fomalizado_</strong> para espaço do tipo  <strong>_coletivo_</strong>_cidade_ <br><br><p>Você confirma essas informações?</p>"); ?>`;
                 msg = msg.replace(/_fomalizado_/g, fomalizado);
                 msg = msg.replace(/_coletivo_/g, coletivo);
 
@@ -71,48 +77,46 @@ if (count($cidades) === 0) {
                 }else{
                     msg = msg.replace(/_cidade_/g, ".");
                 }
+
             }else{
                 var cidade = $('.js-select-cidade option:selected').val();
                 if( cidade > 0 ){
-
-
-                    msg = `<?php \MapasCulturais\i::_e("Você está solicitando o auxílio para <strong>_fomalizado_</strong> para espaço do tipo  <strong>_coletivo_</strong>_cidade_ <br><br><p>Você confirma essas informações?</p>"); ?>`;
+                    msg = `<?php \MapasCulturais\i::_e("Você está solicitando o benefício para <strong>_fomalizado_</strong> para espaço do tipo  <strong>_coletivo_</strong>_cidade_ <br><br><p>Você confirma essas informações?</p>"); ?>`;
                     msg = msg.replace(/_fomalizado_/g, fomalizado);
                     msg = msg.replace(/_coletivo_/g, coletivo);
-
                     if(nomeCidade){
                         msg = msg.replace(/_cidade_/g, " na cidade de <strong>" + nomeCidade + "</strong>.");
                     }else{
                         msg = msg.replace(/_cidade_/g, ".");
                     }
-
                 }else{
-                    $('.modal-content').find('.js-title').text('Atenção!');
-                    $('.modal-content').find('.js-confirmar').hide();
-                    msg = "Você precisa selecionar a cidade."
+                    showModalMsg('Atenção!', 'Você precisa selecionar a cidade.');
                 }
             }
 
-            $('.modal-content').find('.text').html(msg);
+            $('#modalAlertCadastro .modal-content').find('.modal-content-text').html(msg);
 
-            $('.close').on('click', function() {
+            $('.close, .btn-ok').on('click', function() {
                 modal.fadeOut('slow');
             });
 
         }
 
-        function showModalMsg(title, msg){
-            var modal = $('#modalAlert');
+        function showModalMsg(title, message){
+            let modal   = $('#modalAlertCadastro');
+            let text = document.getElementById("modal-content-text");
 
-            modal.css("display", "flex").hide().fadeIn(1200);
+            $('#modalAlertCadastro .modal-content').find('.js-title').text(title);
 
-            $('.modal-content').find('.js-title').text('Atenção!');
-            $('.modal-content').find('.js-confirmar').hide();
+            $('#modalAlertCadastro .modal-content').find('.btn').val('close');
+            $('#modalAlertCadastro .modal-content').find('.btn').text('<?php \MapasCulturais\i::_e("OK"); ?>');
 
-            $('.modal-content').find('.text').html(msg);
+            text.textContent = message ;
 
-            $('.close').on('click', function() {
-                modal.fadeOut('slow');
+            modal.fadeIn('fast');
+
+            $('.close, .btn-ok').on('click', function() {
+                modal.fadeOut('fast');
             });
         }
 
@@ -121,7 +125,7 @@ if (count($cidades) === 0) {
          */
         function goToQuestionPersonality(){
             $('.js-questions-tab').hide();
-            $('#personalidade-juridica').fadeIn(1100);
+            $('#personalidade-juridica').fadeIn('fast');
             returning = false;
         }
 
@@ -134,7 +138,7 @@ if (count($cidades) === 0) {
 
             if (returning) {
                 $('.js-questions-tab').hide();
-                $('#select-cidade').fadeIn(1100);
+                $('#select-cidade').fadeIn('fast');
                 return;
             }
 
@@ -145,10 +149,10 @@ if (count($cidades) === 0) {
              */
             if (params.opportunity == null && hasCities.length > 0) {
                 $('.js-questions-tab').hide();
-                $('#select-cidade').fadeIn(1100);
+                $('#select-cidade').fadeIn('fast');
                 returning = false;
             } else {
-                $('.js-questions-tab').hide();
+                // $('.js-questions-tab').hide();
                 showModal()
             }
         }
@@ -179,16 +183,16 @@ if (count($cidades) === 0) {
             switch (parentId) {
                 case 'personalidade-juridica':
                     $('#personalidade-juridica').hide();
-                    $('#local-atividade').fadeIn(1100);
+                    $('#local-atividade').fadeIn('fast');
                     break;
                 case 'local-atividade':
                     $('.js-questions').hide();
                     $('#personalidade-juridica').hide();
-                    $('.js-lab-item').fadeIn(1100);
+                    $('.js-lab-item').fadeIn('fast');
                     break;
                 case 'select-cidade':
                     $('#select-cidade').hide();
-                    $('#personalidade-juridica').fadeIn(1100);
+                    $('#personalidade-juridica').fadeIn('fast');
                     params.opportunity = null;
                     $(".js-select-cidade").select2("val", "-1");
                     break;
@@ -197,12 +201,13 @@ if (count($cidades) === 0) {
 
         $('.js-next').click(function() {
             var parentId = $(this).closest('.js-questions-tab').attr('id');
+
             if(parentId == 'local-atividade'){
                 var hasSeletedColetivo =  $('input[name=coletivo]:checked');
                 if(hasSeletedColetivo.length > 0){
                     goToQuestionPersonality()
                 }else{
-                    showModalMsg('Atenção!', 'Você precisa selecionar um opção para avançar')
+                    showModalMsg('Atenção!', 'Você precisa selecionar uma opção para avançar')
                 }
             }else if(parentId == 'select-cidade'){
                 showModal()
@@ -211,27 +216,31 @@ if (count($cidades) === 0) {
                 if(hasSeletedFormalizado.length > 0){
                     goToQuestionCounty()
                 }else{
-                    showModalMsg('Atenção!','Você precisa selecionar um opção para avançar')
+                    showModalMsg('Atenção!','Você precisa selecionar uma opção para avançar')
                 }
             }
         });
 
-        $('.js-confirmar').click(function() {
-            $('.js-questions-tab').hide();
-            $('.js-questions').html('<h4>Enviando informações ...</h4>');
-            $('#modalAlert').fadeOut('slow')
-            goToNextPage();
+        $('button.js-confirmar').click(function() {
+            if(this.value == 'next'){
+                $('.js-questions-tab').hide();
+                $('.js-questions').html('<h4>Enviando informações ...</h4>');
+                $('#modalAlertCadastro').fadeOut('slow')
+                goToNextPage();
+            }else{
+                $('#modalAlertCadastro').fadeOut('slow')
+            }
         });
 
-        // Exibe/esconde texto explicativo das opções de cadastro em celulares
-        $('.js-help').click(function() {
-            $('.js-detail').toggle('1000');
+        //Fechar modal ao clicar fora dela.
+        $(window).click(function (event) {
+            var modal =  $('#modalAlertCadastro');
+            if( event.target.value != 'next'){
+                if($(event.target).css('display') == 'flex'){
+                    modal.fadeOut('slow')
+                }
+            }
         });
-
-
-        // $('.informative-box .informative-box--content .more').hover(function(e) {
-        //     $(this.parentElement).addClass('active');
-        // })
 
         /**
          * Ao clicar nos cards do Inciso II, o usuário é encaminhado para tela de opções do local de atividade do beneficiário.
@@ -245,7 +254,7 @@ if (count($cidades) === 0) {
 
             $('.js-lab-item').fadeOut(1);
             $('.js-questions').fadeIn(11);
-            $('#local-atividade').fadeIn(1100);
+            $('#local-atividade').fadeIn('fast');
             returning = false;
         });
     });
@@ -258,9 +267,9 @@ if (count($cidades) === 0) {
     </header>
 
     <div class="js-lab-item lab-item cadastro-options">
-        <!-- <p class="lab-form-question">Para quem você está solicitando o auxílio? <a class="js-help icon icon-help" href="#" title=""></a></p> -->
+        <!-- <p class="lab-form-question">Para quem você está solicitando o benefício? <a class="js-help icon icon-help" href="#" title=""></a></p> -->
         <h2 class="featured-title"> 
-            Selecione abaixo o auxílio desejado
+            Selecione abaixo o benefício desejado
         </h2>
 
         <div class="lab-form-filter opcoes-inciso">
@@ -273,12 +282,13 @@ if (count($cidades) === 0) {
                 <button onclick="location.href='<?= $this->controller->createUrl('individual') ?>'" clickable id="option3" class="informative-box lab-option">
                 <!-- <button id="option3" class="informative-box lab-option"> -->
                     <div class="informative-box--icon">
-                        <i class="fas fa-users"></i>
+                        <i class="fas fa-user"></i>
                     </div>
 
                     <div class="informative-box--title">
                         <h2><?= $inciso1Title ?></h2>
-                        <i class="far fa-check-circle"></i>
+                        <i class="fas fa-minus"></i>
+                        <!-- <i class="far fa-check-circle"></i> -->
                     </div>
 
                     <div class="informative-box--content active" data-content="">
@@ -289,6 +299,10 @@ if (count($cidades) === 0) {
                     </div>
                 </button>
             <?php
+            }
+            else if(!$inciso1_enabled && isset($this->controller->config['msg_inciso1_disabled'])){    
+                $mensagemInciso1Disabled = $this->controller->config['msg_inciso1_disabled'];
+                $this->part('aldirblanc/cadastro/inciso-disabled',  ['mensagem' => $mensagemInciso1Disabled, 'title' => $inciso1Title ]);  
             }
             foreach ($registrationsInciso1 as $registration) {
                 $registrationUrl = $this->controller->createUrl('formulario', [$registration->id]);
@@ -314,7 +328,8 @@ if (count($cidades) === 0) {
     
                         <div class="informative-box--title">
                             <h2><?= $inciso2Title ?></h2>
-                            <i class="far fa-check-circle"></i>
+                            <!-- <i class="far fa-check-circle"></i> -->
+                            <i class="fas fa-minus"></i>
                         </div>
     
                         <div class="informative-box--content active" data-content="">
@@ -327,6 +342,10 @@ if (count($cidades) === 0) {
     
                     <!-- End #option1 -->
                 <?php
+                }
+                else if(!$inciso2_enabled && isset($this->controller->config['msg_inciso2_disabled'])){    
+                    $mensagemInciso2Disabled = $this->controller->config['msg_inciso2_disabled'];
+                    $this->part('aldirblanc/cadastro/inciso-disabled',  ['mensagem' => $mensagemInciso2Disabled, 'title' => $inciso2Title ]);  
                 }
                 foreach ($registrationsInciso2 as $registration) {
                     $registrationUrl = $this->controller->createUrl('formulario', [$registration->id]);
@@ -373,7 +392,7 @@ if (count($cidades) === 0) {
                 </label>
             </div>
             <div class="questions--nav">
-                <button class="btn btn-back js-back"><?php i::_e('Voltar') ?></button>
+                <button class="btn secondary btn-back js-back"><?php i::_e('Voltar') ?></button>
                 <button class="btn btn-next js-next"><?php i::_e("Avançar"); ?></button>
             </div>
         </div>
@@ -401,7 +420,7 @@ if (count($cidades) === 0) {
                 <?php i::_e('* Subsídio mensal para manutenção de espaços artísticos e culturais, microempresas e pequenas empresas culturais, cooperativas, instituições e organizações culturais comunitárias que tiveram as suas atividades interrompidas por força das medidas de isolamento social.') ?>
             </p>
             <div class="questions--nav">
-                <button class="btn btn-back js-back"><?php i::_e('Voltar') ?></button>
+                <button class="btn secondary btn-back js-back"><?php i::_e('Voltar') ?></button>
                 <button class="btn btn-next js-next"><?php i::_e("Avançar"); ?></button>
             </div>
         </div>
@@ -413,7 +432,7 @@ if (count($cidades) === 0) {
                 <p class="questions--summary"><?php i::_e('Indique a cidade onde o beneficiário do subsídio está instalado ou tem desenvolvido, atualmente, suas atividades culturais.') ?></p>
                 <?php $this->part('aldirblanc/cadastro/select-cidade', ['cidades' => $cidades]) ?>
                 <div class="questions--nav">
-                    <button class="btn btn-back js-back"><?php i::_e('Voltar') ?></button>
+                    <button class="btn secondary btn-back js-back"><?php i::_e('Voltar') ?></button>
                     <button class="btn btn-next js-next"><?php i::_e("Avançar"); ?></button>
                 </div>
             </div>
@@ -423,12 +442,12 @@ if (count($cidades) === 0) {
 
     </div><!-- End .box -->
 
-    <div id="modalAlert" class="modal">
+    <div id="modalAlertCadastro" class="modal">
         <!-- Modal content -->
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2 class="modal-content--title js-title"></h2>
-            <p class="text"></p>
+            <p id="modal-content-text" class="modal-content-text"></p>
             <button class="btn js-confirmar"><?php \MapasCulturais\i::_e("Confirmar"); ?></button>
         </div>
     </div>

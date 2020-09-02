@@ -35,18 +35,26 @@ $_params = [
 
         <?php $this->applyTemplateHook('form', 'end'); ?>
         <p class="registration-help"><?php \MapasCulturais\i::_e("Certifique-se que você preencheu as informações corretamente antes de enviar sua inscrição."); ?> <strong><?php \MapasCulturais\i::_e("Depois de enviada, não será mais possível editá-la."); ?></strong></p>
-        <a class="btn" ng-click="sendRegistration()" rel='noopener noreferrer'><?php \MapasCulturais\i::_e("Confirmar envio"); ?></a>
+        <a class="btn btn-confirmar" ng-click="sendRegistration()" rel='noopener noreferrer'><?php \MapasCulturais\i::_e("Confirmar envio"); ?></a>
         <a href="<?= $this->controller->createUrl('formulario', [$entity->id]) ?>" class="btn secondary"><?php \MapasCulturais\i::_e("Editar formulário"); ?></a>
 
     </article>
-    <div ng-if="data.sent" style="display:block" id="modalAlert" class="">
+    <div  ng-show="data.sent" style="display:none" id="modalAlert" class="modal">
         <!-- Modal content -->
         <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Preenchimento Finalizado</h2>
-            <p class="text">lorem</p>
-            <a href="<?= $this->controller->createUrl('status', [$entity->id]) ?>" class="btn js-confirmar"><?php \MapasCulturais\i::_e("Ok"); ?></a>
+            <!-- <span class="close">&times;</span> -->
+            <h2>Cadastro enviado com sucesso!</h2>
+            <p class="text">Sua inscrição será analisada pelo comitê de curadoria e o resultado será informado por email. <br/>Você também pode acompanhar o andamento da análise através desse site.</p>
+            <a href="<?= $this->controller->createUrl('status', [$entity->id]) ?>" class="btn js-confirmar"><?php \MapasCulturais\i::_e("Acompanhar solicitação"); ?></a>
         </div>
     </div>
 
 </article>
+
+<script>
+    $(window).ready(function () {
+        $('.btn-confirmar').click(function () {
+            $('#modalAlert').css('display', 'flex')
+        });
+    });
+</script>

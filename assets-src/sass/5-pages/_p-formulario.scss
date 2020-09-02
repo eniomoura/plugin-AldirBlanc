@@ -1,9 +1,18 @@
+
+#editable-entity{
+    border-left: none!important;
+    background: transparent!important;
+    margin-top: 67px;
+    box-shadow:none;
+}
+
 article.registration {
     
     background: none;
     float: none;
     margin-left: auto;
     margin-right: auto;
+    word-wrap: break-word;
 
     h1 {
         font-size: $font-size-h3;
@@ -11,7 +20,82 @@ article.registration {
         line-height: 1.9375rem;
         text-align: center;
         margin-bottom: 35px;
+        padding-top: 35px;
         font-weight: bold;
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .registration-fieldset  {
+        ul {
+            li {   
+                .relation-field-info, .icon-agent  {
+                    display: none;
+                }
+
+                > div {
+                    > span:first-of-type {
+                        display: flex;
+                        justify-content: space-between;
+                        
+                        span:last-of-type {
+                            color: #C60931;
+                            font-size: 11px;
+                            letter-spacing: 0;
+                            line-height: 15px;
+                            text-transform: lowercase;
+                        }
+                    }
+
+                }
+
+                .alert {
+                    padding: 0;
+                    padding-left: 40px;
+
+                    &:before {
+                        content: "\f071";
+                        font-weight: 600;
+                        font-family: "Font Awesome 5 Free";
+                    }
+                }
+
+                div.invalidField {
+                    input {
+                        border: 1px solid #C60931;
+                        border-radius: 2px;
+                        background-color: rgba(198,9,49,0.15);
+                    }
+                }
+            }
+        }
+    }
+
+    .errors {
+        text-align:left;
+        font-size: 12px;
+        color: $brand-tertiary;
+        text-align:left;
+        word-wrap: break-word;
+        a{
+            color: $brand-tertiary;
+        }
+        &-header{
+            margin-top:10px;
+            margin-bottom:10px;
+            text-align:center;
+            color: $brand-tertiary;
+            &-title{
+                font-size: 14px;
+                font-weight: bolder;
+                font-family: "Open Sans", Helvetica, Arial, sans-serif;
+            }
+        }
+        &-field{
+            color: $brand-tertiary;
+            font-weight: normal;
+        }
     }
 
     .registration-header {
@@ -20,6 +104,38 @@ article.registration {
 
     .registration-help {
         text-align: center;
+    }
+
+    .edit-box {
+        border-radius: 14px;
+
+        @include tablet {
+            width: calc(100vw - 100px)!important;
+            margin: 0 auto!important;
+        }
+
+        header {
+            h1 {
+                font-size: 16px;
+                line-height: 22px;
+                margin-bottom: 10px;
+            }
+        }
+
+        .mc-cancel {
+            background-color: #efefef;
+            color: #2d2d2d;
+
+            &:hover {
+                background-color: #2d2d2d;
+                color: #efefef;
+            }
+        }
+
+        .submit-attach-opportunity {
+            @extend .btn;
+            margin-bottom: 0;
+        }
     }
     
     .registration-fieldset {
@@ -79,6 +195,7 @@ article.registration {
                     font-size: $font-size-base;
                     font-weight: lighter;
                     text-transform: capitalize;
+                    word-wrap: break-word;
                 }
 
                 // Descrição dos campos
