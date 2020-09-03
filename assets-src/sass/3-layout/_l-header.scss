@@ -5,6 +5,12 @@ header {
         height: auto;
         margin: 0 auto;
         padding: 10px;
+
+        img{
+            height: 65px;
+            margin-bottom: 15px;
+        }
+
         @include transition(all, 0.3s, ease-in-out);
         width: 200px;
         @include desktop {
