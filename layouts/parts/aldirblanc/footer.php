@@ -16,7 +16,7 @@ $termosECondicoes = isset($aldirBlancController->config['privacidade_termos_cond
 <footer id="main-footer">
 
     <div class="logo-state">
-        <img src="<?php $this->asset('aldirblanc/img/governo-para.png') ?>">
+        <img src="<?php $this->asset('img/logo-instituicao.png') ?>">
     </div>
 
 
