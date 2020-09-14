@@ -631,5 +631,3 @@ class Plugin extends \MapasCulturais\Plugin
     }
 
 }
-
-''
