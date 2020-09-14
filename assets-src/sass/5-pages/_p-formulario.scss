@@ -2,8 +2,23 @@
 #editable-entity{
     border-left: none!important;
     background: transparent!important;
-    margin-top: 67px;
+    margin: 0 !important;
     box-shadow:none;
+
+    .alert {
+        margin-top: 50px;
+        margin-bottom: -50px;
+    }
+}
+
+h2.category {
+    font-size: 1em;
+    text-align: center;
+}
+
+h2.category {
+    font-size: 1em;
+    text-align: center;
 }
 
 h2.category {
@@ -50,6 +65,10 @@ article.registration {
                             letter-spacing: 0;
                             line-height: 15px;
                             text-transform: lowercase;
+
+                            &:before {
+                                content: "*"
+                            }
                         }
                     }
 
@@ -96,7 +115,7 @@ article.registration {
                         border: 2px solid rgba(198, 9, 49, 1);
                         padding: 14px;
                         border-radius: 10px;
-                        background-color: rgba(198, 9, 49, 0.15);
+                        background-color: rgba(198, 9, 49, 0.02);
                         
                     }
                     
@@ -106,7 +125,7 @@ article.registration {
                     input, select, textarea {
                         border: 1px solid #C60931;
                         border-radius: 2px;
-                        background-color: rgba(198,9,49,0.15);
+                        background-color: rgba(198, 9, 49, 0.02);
                     }
                 }
             }
@@ -208,6 +227,7 @@ article.registration {
         }
 
         .alert.danger {
+            display: none!important;
             background: none;
             border: 0;
             margin-bottom: 0;
@@ -256,6 +276,10 @@ article.registration {
                     p {
                         display: grid;
                         grid-template-columns: repeat(2, 1fr);
+
+                        @include tablet {
+                            grid-template-columns: auto;
+                        }
 
                         label  {
                             display: flex;
