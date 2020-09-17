@@ -44,17 +44,17 @@ class Plugin extends \MapasCulturais\Plugin
             'privacidade_termos_condicoes' => env('AB_PRIVACIDADE_TERMOS',null),
         ];
 
-        $cache_id = __METHOD__ . ':' . 'config';
+        // $cache_id = __METHOD__ . ':' . 'config';
 
-        if ($cached = $app->cache->fetch($cache_id)) {
-            parent::__construct($cached);
-        } else {
-            $config = $this->configOpportunitiesIds($config);
-            if(!empty($config['inciso2_opportunity_ids'])){
-                $app->cache->save($cache_id, $config, 3600);
-            }
-            parent::__construct($config);
-        }
+        // if ($cached = $app->cache->fetch($cache_id)) {
+        //     parent::__construct($cached);
+        // } else {
+        //     $config = $this->configOpportunitiesIds($config);
+        //     if(!empty($config['inciso2_opportunity_ids'])){
+        //         $app->cache->save($cache_id, $config, 3600);
+        //     }
+        //     parent::__construct($config);
+        // }
     }
 
     public function configOpportunitiesIds($config) {
