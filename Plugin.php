@@ -129,9 +129,33 @@ class Plugin extends \MapasCulturais\Plugin
             $app->view->printStyles('aldirblanc');
         });
 
+        //No cadastro da oportunidade (inciso2), adiciona os campos para bloqueio de edição/deleção
         $app->hook('opportunity.blockedFields', function ($entity) use ($app) {
-            $app->view->jsObject['blockedFields'] = $entity->aldirBlancFields;
+            if(!$app->user->is('admin')) {
+                $app->view->jsObject['blockedOpportunityFields'] = $entity->aldirBlancFields;
+            }
         });
+
+        //No cadastro da oportunidade (inciso2), muda a permissao de editar as categorias
+        $app->hook('opportunity.blockedCategoryFields', function (&$entity,&$can_edit) use ($app) {
+            if(!$app->user->is('admin')) {
+                $fields = $entity->aldirBlancFields;
+                if(!empty($fields)) {
+                    $can_edit = false;
+                }
+            }            
+        });
+        
+        //No cadastro da oportunidade (inciso2), apresenta mensagem de bloqueio de edição das categorias
+        $app->hook('template(opportunity.<<create|edit>>.categories-messages):begin', function ($entity) use($app) {
+            if(!$app->user->is('admin')) {
+                $fields = $entity->aldirBlancFields;
+                if(!empty($fields)) {
+                    $this->part('aldirblanc/categories-messages');
+                }
+            }            
+        });
+        
 
         $app->hook('template(subsite.<<create|edit>>.tabs):end', function () {
             $this->part('aldirblanc/subsite-tab');
