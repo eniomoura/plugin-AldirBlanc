@@ -1,5 +1,6 @@
 <?php
 
+use Doctrine\Common\Util\Debug;
 use MapasCulturais\i;
 use MapasCulturais\Entities\Registration;
 
@@ -9,6 +10,8 @@ $inciso2_enabled = $this->controller->config['inciso2_enabled'];
 $inciso1_enabled = $this->controller->config['inciso1_enabled'];
 
 $this->jsObject['opportunityId'] = null;
+$this->jsObject['opportunitiesInciso2'] = $opportunitiesInciso2;
+$this->jsObject['serverDate'] = new DateTime();
 
 if (count($cidades) === 0) {
     $inciso2_enabled = false;
@@ -20,7 +23,9 @@ if (count($cidades) === 0) {
 }
 
 ?>
-<script>
+
+<script type="text/javascript">
+
     $(document).ready(function() {
 
         var params = {
@@ -36,7 +41,9 @@ if (count($cidades) === 0) {
         if (MapasCulturais.opportunityId != null) {
             params.opportunity = MapasCulturais.opportunityId
         }
-
+        if (MapasCulturais.opportunitiesInciso2 != null) {
+            params.opportunitiesInciso2 = MapasCulturais.opportunitiesInciso2
+        }
         /**
          * Redireciona o usuário para próxima tela conforme paramentros selecionados.
          */
@@ -67,7 +74,7 @@ if (count($cidades) === 0) {
 
             $('#modalAlertCadastro .modal-content').find('.btn').val('next');
             $('#modalAlertCadastro .modal-content').find('.btn').text('<?php \MapasCulturais\i::_e("Confirmar"); ?>');
-
+            
             if (params.opportunity != null) {
                 msg = `<?php \MapasCulturais\i::_e("Você está solicitando o benefício para <strong>_fomalizado_</strong> para espaço do tipo  <strong>_coletivo_</strong>_cidade_ <br><br><p>Você confirma essas informações?</p>"); ?>`;
                 msg = msg.replace(/_fomalizado_/g, fomalizado);
@@ -96,6 +103,22 @@ if (count($cidades) === 0) {
                 }
             }
 
+            let selectedCityId = $('.js-select-cidade option:selected').val();
+            let cityObj = MapasCulturais.opportunitiesInciso2.filter(city => city.id == selectedCityId)[0]
+            if (!(MapasCulturais.serverDate.date >= cityObj.registrationFrom.date && MapasCulturais.serverDate.date <= cityObj.registrationTo.date)) {
+                modalTitle = cityObj.name;
+
+                msg = `Infelizmente não será possivel realizar sua inscrição:
+                <br>
+                <br>
+                > Data de inicio das inscrições: <strong> ${new Date(cityObj.registrationFrom.date).toLocaleDateString("pt-BR")} </strong>
+                <br>
+                <br>
+                > Data de fim das inscrições: <strong> ${new Date(cityObj.registrationTo.date).toLocaleDateString("pt-BR")} </strong>`
+                
+                $('.js-confirmar').hide();
+            } 
+            
             showModalMsg( modalTitle, msg);
 
             //$('#modalAlertCadastro .modal-content').find('.modal-content-text').html(msg);
@@ -124,6 +147,7 @@ if (count($cidades) === 0) {
                 modal.fadeOut('fast');
             });
         }
+        
 
         /**
          * Ao clicar em uma das opções do local de atividade do beneficiário , o usuário é encaminhado para tela de opções de personalidades jurídica do beneficiário.
@@ -304,9 +328,8 @@ if (count($cidades) === 0) {
 
                     <div class="informative-box--content active" data-content="">
                         <span class="more"> Mais informações </span>
-                        <span class="content">
-                            Farão jus à renda emergencial os(as) trabalhadores(as) da cultura com atividades interrompidas e que se enquadrem, comprovadamente, ao disposto no Art. 6º - Lei 14.017/2020. Prevê o pagamento de cinco parcelas de R$ 600 (seiscentos reais), podendo ser prorrogado conforme Art 5º - Lei 14.017/2020.
-                        </span>
+                        <span class="content"><i>
+                        Renda emergencial destinada aos trabalhadores e trabalhadoras da cultura que tiveram suas atividades interrompidas e se enquadram ao disposto no Art. 6º - Lei 14.017/2020. Prevê o pagamento de três parcelas de R$ 600,00 (seiscentos reais), podendo ser prorrogado conforme Art 5º - Lei 14.017/2020.</i></span>
                     </div>
                 </button>
             <?php
@@ -343,10 +366,9 @@ if (count($cidades) === 0) {
                     </div>
 
                     <div class="informative-box--content active" data-content="">
-                        <span class="more js"> Mais informações </span>
-                        <span class="content">
-                            Farão jus ao benefício espaços, organizações da sociedade civil, empresas, cooperativas e instituições com finalidade cultural, como previsto nos Arts. 7º e 8º - Lei 14.017/2020. Prevê subsídio de R$3.000,00 (três mil reais) a R$10.000,00 (dez mil reais), prescrito pela gestão local.
-                        </span>
+                        <span class="more js">Mais informações</span>
+                        <span class="content"><i>    
+                        Benefício destinado a espaços, organizações da sociedade civil, empresas, cooperativas e instituições com finalidade cultural, conforme Arts. 7º e 8º - Lei 14.017/2020. Prevê subsídio mensal entre R$ 3.000,00 (três mil reais) e R$ 10.000,00 (dez mil reais), conforme definição da gestão local.</i></span>
                     </div>
                 </button>
 
@@ -461,8 +483,9 @@ if (count($cidades) === 0) {
             <span class="close">&times;</span>
             <h2 class="modal-content--title js-title"></h2>
             <p id="modal-content-text" class="modal-content-text"></p>
-            <button class="btn js-confirmar"><?php \MapasCulturais\i::_e("Confirmar"); ?></button>
+            <button class="btn js-confirmar"><?php \MapasCulturais\i::_e("Confirmar"); ?></button>        
         </div>
     </div>
 
 </section>
+
