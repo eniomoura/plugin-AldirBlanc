@@ -2,8 +2,8 @@
 
 namespace AldirBlanc;
 
-use Exception;
 use MapasCulturais\App;
+use MapasCulturais\Definitions\Role;
 use MapasCulturais\i;
 
 // @todo refatorar autoloader de plugins para resolver classes em pastas
@@ -42,6 +42,8 @@ class Plugin extends \MapasCulturais\Plugin
             'msg_inciso2_disabled' => env('AB_INCISO2_DISABLE_MESSAGE','A solicitação deste benefício será lançada em breve. Acompanhe a divulgação pelas instituições responsáveis pela gestão da cultura em seu município!'),
             'link_suporte' => env('AB_LINK_SUPORTE',null),
             'privacidade_termos_condicoes' => env('AB_PRIVACIDADE_TERMOS',null),
+            'mediados_owner' => env('AB_MEDIADOS_OWNER',''),
+            'lista_mediadores' =>  (array) json_decode(env('AB_LISTA_MEDIADORES', '[]'))
         ];
 
         // $skipConfig = false;
@@ -106,6 +108,7 @@ class Plugin extends \MapasCulturais\Plugin
         $app = App::i();
 
         // enqueue scripts and styles
+        $app->view->enqueueScript('app', 'aldirblanc', 'aldirblanc/app.js');
         $app->view->enqueueStyle('aldirblanc', 'app', 'aldirblanc/app.css');
         $app->view->enqueueStyle('aldirblanc', 'fontawesome', 'https://use.fontawesome.com/releases/v5.8.2/css/all.css');
         $app->view->assetManager->publishFolder('aldirblanc/img', 'aldirblanc/img');
@@ -209,6 +212,34 @@ class Plugin extends \MapasCulturais\Plugin
             }
         });
 
+        $app->hook('GET(aldirblanc.<<*>>):before', function() use ($plugin, $app) {
+            if ($app->user->is('mediador')) {
+                $limit = 1000;
+                
+                $plugin->_config['inciso1_limite'] = $limit;
+                $plugin->_config['inciso2_limite'] = $limit;
+            }
+        });
+        
+        $app->hook('entity(User).save:after', function() use ($plugin, $app) {
+            $emails = $plugin->config['lista_mediadores'];
+            if (in_array($this->email, $emails) ){
+                $this->addRole('mediador');
+            }
+        });
+
+        $app->hook('auth.successful', function() use($plugin, $app) {
+            $opportunities_ids = array_values($plugin->config['inciso2_opportunity_ids']);
+            $opportunities_ids[] = $plugin->config['inciso1_opportunity_id'];
+
+            $opportunities = $app->repo('Opportunity')->findBy(['id' => $opportunities_ids]);
+            
+            foreach($opportunities as $opportunity) { 
+                if($opportunity->canUser('@control')) {
+                    $_SESSION['mapasculturais.auth.redirect_path'] = $app->createUrl('panel', 'index');
+                }
+            }
+        });
     }
 
     /**
@@ -222,7 +253,42 @@ class Plugin extends \MapasCulturais\Plugin
 
         $app->registerController('aldirblanc', 'AldirBlanc\Controllers\AldirBlanc');
 
+        // registra o role para mediadores
+        $role_definition = new Role('mediador', 'Mediador', 'Mediadores', true, function($user){ return $user->is('admin'); });
+        $app->registerRole($role_definition);
+
+        $def_autorizacao = new \MapasCulturais\Definitions\FileGroup('mediacao-autorizacao', [
+            '^application/.*$',
+            '^image/(jpeg|png)$'
+        ], ['O arquivo deve ser um documento ou uma imagem .jpg ou .png'], true, null, true);
+
+        $def_documento = new \MapasCulturais\Definitions\FileGroup('mediacao-documento', [
+            '^application/.*',
+            '^image/(jpeg|png)$'
+        ], ['O arquivo deve ser um documento ou uma imagem .jpg ou .png'], true, null, true);
+
+        // registra campos para mediaçào
+        $app->registerFileGroup('aldirblanc', $def_autorizacao);
+        $app->registerFileGroup('aldirblanc', $def_documento);
+
         /* registrinado metadados do usuário */
+
+        $this->registerMetadata('MapasCulturais\Entities\Registration', 'mediacao_contato_tipo', [
+            'label' => i::__('Tipo de contato da mediação'),
+            'type' => 'select',
+            'private' => true,
+            'options' => [
+                'telefone-fixo' => i::__('Telefone Fixo'),
+                'whatsapp' => i::__('Whatsapp'),
+                'sms' => i::__('SMS'),
+            ]
+        ]);
+
+        $this->registerMetadata('MapasCulturais\Entities\Registration', 'mediacao_contato', [
+            'label' => i::__('Número telefônico do contato'),
+            'type' => 'text',
+            'private' => true
+        ]);
 
         /**
          * Tipo de usuário na aldir 
