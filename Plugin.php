@@ -22,10 +22,14 @@ class Plugin extends \MapasCulturais\Plugin
         }
 
         $config += [
+            'texto_home'=> env('AB_TEXTO_HOME','A Lei Aldir Blanc é fruto de forte mobilização social do campo artístico e cultural brasileiro, resultado de construção coletiva, a partir de webconferências nacionais e estaduais como plataformas políticas na formulação, articulação, tramitação e sanção presidencial.<br/><br/> Ela prevê o uso de 3 bilhões de reais para o auxílio de agentes da cultura atingidos pela pandemia da COVID-19. Investimentos para assegurar a preservação de toda a estrutura profissional e dinâmica de produção, criação, participação, preservação, formação e circulação dos bens e serviços culturais.<br/><br/> Clique no link abaixo para solicitar a renda emergencial como trabalhadora e trabalhador da cultura ou o subsídio para a manutenção de espaços artísticos e organizações culturais que tiveram as suas atividades interrompidas por força das medidas de isolamento social.'),
+            'botao_home'=> env('AB_BOTAO_HOME','Solicite seu auxilio'),
+            'titulo_home'=> env('AB_TITULO_HOME','Lei Aldir Blanc'),
             'logotipo_central' => env('AB_LOGOTIPO_CENTRAL',''),
             'logotipo_instituicao' => env('AB_LOGOTIPO_INSTITUICAO',''),
             'inciso1_enabled' => env('AB_INCISO1_ENABLE',true),
             'inciso2_enabled' => env('AB_INCISO2_ENABLE',true),
+            'inciso3_enabled' => env('AB_INCISO3_ENABLE',false),
             'project_id' => env('AB_INCISO2_PROJECT_ID',null),
             'inciso1_opportunity_id' => env('AB_INCISO1_OPPORTUNITY_ID', null),
             'inciso2_opportunity_ids' => (array) json_decode(env('AB_INCISO2_OPPORTUNITY_IDS', '[]')),
@@ -55,6 +59,7 @@ class Plugin extends \MapasCulturais\Plugin
             'texto_cadastro_cpf'  => env('AB_TXT_CADASTRO_CPF', 'Coletivo ou grupo cultural (sem CNPJ). Pessoa física (CPF) que mantêm espaço artístico'),
             'texto_cadastro_cnpj'  => env('AB_TXT_CADASTRO_CNPJ', 'Entidade, empresa ou cooperativa do setor cultural com inscrição em CNPJ.'),
             'csv_inciso1' => require_once env('AB_CSV_INCISO1', __DIR__ . '/config-csv-inciso1.php'),
+            'csv_inciso2' => require_once env('AB_CSV_INCISO2', __DIR__ . '/config-csv-inciso2.php')
         ];
 
         // $skipConfig = false;
@@ -120,6 +125,7 @@ class Plugin extends \MapasCulturais\Plugin
 
         // enqueue scripts and styles
         $app->view->enqueueScript('app', 'aldirblanc', 'aldirblanc/app.js');
+        $app->view->enqueueStyle('aldirblanc', 'app-customization', 'aldirblanc/customization.css');
         $app->view->enqueueStyle('aldirblanc', 'app', 'aldirblanc/app.css');
         $app->view->enqueueStyle('aldirblanc', 'fontawesome', 'https://use.fontawesome.com/releases/v5.8.2/css/all.css');
         $app->view->assetManager->publishFolder('aldirblanc/img', 'aldirblanc/img');
@@ -137,6 +143,23 @@ class Plugin extends \MapasCulturais\Plugin
             }
             $this->part('aldirblanc/generate-opportunities-button');
         });
+        
+        //botao de export csv
+        $app->hook('template(opportunity.single.header-inscritos):end', function () use($plugin, $app){
+            $opportunities_ids = array_values($plugin->config['inciso2_opportunity_ids']);
+            $opportunities_ids[] = $plugin->config['inciso1_opportunity_id'];
+            $requestedOpportunity = $this->controller->requestedEntity; //Tive que chamar o controller para poder requisitar a entity
+            $opportunity = $requestedOpportunity->id;
+            if(($requestedOpportunity->canUser('@control')) && in_array($requestedOpportunity->id,$opportunities_ids) ) {
+                if (in_array($requestedOpportunity->id, $inciso1Ids)){
+                    $inciso = 1;
+                }
+                else if (in_array($requestedOpportunity->id, $inciso2Ids)){
+                    $inciso = 2;
+                }
+                $this->part('aldirblanc/csv-button', ['inciso' => $inciso, 'opportunity' =>$opportunity]);
+            }
+         });
 
         // add hooks
         $app->hook('mapasculturais.styles', function () use ($app) {
@@ -179,8 +202,11 @@ class Plugin extends \MapasCulturais\Plugin
             $this->part('aldirblanc/subsite-tab-content');
         });
 
-        $app->hook('template(site.index.home-search):end', function () {
-            $this->part('aldirblanc/home-search');
+        $app->hook('template(site.index.home-search):end', function () use ($plugin) {
+            $texto = $plugin->config['texto_home'];
+            $botao = $plugin->config['botao_home'];
+            $titulo = $plugin->config['titulo_home'];
+            $this->part('aldirblanc/home-search', ['texto' => $texto, 'botao' => $botao, 'titulo' => $titulo]);
         });
 
         /**
@@ -258,7 +284,10 @@ class Plugin extends \MapasCulturais\Plugin
             $opportunities_ids = array_values($plugin->config['inciso2_opportunity_ids']);
             $opportunities_ids[] = $plugin->config['inciso1_opportunity_id'];
             $requestedOpportunity = $this->requestedEntity;
-            if(!($requestedOpportunity->canUser('@control')) && in_array($requestedOpportunity->id,$opportunities_ids) ) {
+            $can_view = $requestedOpportunity->canUser('@control') || 
+                        $requestedOpportunity->canUser('viewEvaluations') || 
+                        $requestedOpportunity->canUser('evaluateRegistrations');
+            if(!$can_view && in_array($requestedOpportunity->id,$opportunities_ids) ) {
                 $url = $app->createUrl('aldirblanc', 'cadastro');
                 $app->redirect($url);
             }
@@ -268,7 +297,11 @@ class Plugin extends \MapasCulturais\Plugin
             $opportunities_ids[] = $plugin->config['inciso1_opportunity_id'];
             $registration = $this->requestedEntity;
             $requestedOpportunity = $registration->opportunity;
-            if(!($requestedOpportunity->canUser('@control')) && in_array($requestedOpportunity->id,$opportunities_ids) ) {
+            $can_view = $requestedOpportunity->canUser('@control') || 
+                        $requestedOpportunity->canUser('viewEvaluations') || 
+                        $requestedOpportunity->canUser('evaluateRegistrations');
+
+            if(!$can_view && in_array($requestedOpportunity->id,$opportunities_ids) ) {
                 $url = $app->createUrl('aldirblanc', 'formulario',[$registration->id]);
                 $app->redirect($url);
             }

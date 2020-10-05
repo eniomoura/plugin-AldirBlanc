@@ -1,5 +1,10 @@
 header {
     position: relative;
+
+    &#main-header {
+        background-color: var(--header-background);
+    }
+
     .logo-state {
         display: none;
         height: auto;
@@ -13,18 +18,21 @@ header {
 
         @include transition(all, 0.3s, ease-in-out);
         width: 200px;
+        @include transition(all, 0.3s, ease-in-out);
         @include desktop {
             display: block;
             left: 0;
             position: absolute;
         }
     }
+
     .logo {
         height: auto;
         margin: 0 auto;
         padding-top: 5px;
         width: 160px;
     }
+
     .logout {
         height: 100%;
         padding: 0 15px;
