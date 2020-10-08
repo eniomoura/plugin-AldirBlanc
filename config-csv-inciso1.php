@@ -20,4 +20,16 @@ return [
     "FLAG_ATUACAO_HUMANIDADES" => env('INC1_CSV_FLAG_ATUACAO_HUMANIDADES', 'field_24496'),
     "FAMILIARCPF" => env('INC1_CSV_FAMILIARCPF','field_24500'),
     "GRAUPARENTESCO" => env('INC1_CSV_GRAUPARENTESCO','field_24500'),
+    "parameters_csv_default" => [
+        "status" => ''
+    ],
+    'atuacoes-culturais' => [ // Opções para área de atuações culturais
+        'artes-cenicas' => [],
+        'audiovisual' => [],
+        'musica' => [],
+        'artes-visuais' => [],
+        'patrimonio-cultural' => [],
+        'museu-memoria' => [],
+        'humanidades' => [],
+    ],
 ];

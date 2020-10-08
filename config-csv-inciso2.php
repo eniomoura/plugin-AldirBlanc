@@ -1,11 +1,11 @@
 <?php
 return [
-    "fields_cpf" => [
+    "fields_cpf" => [ // Campos para CPF
         'CPF' => '',
         'SEXO' => '',
         'NOME_ESPACO_CULTURAL' => [],
         'FLAG_CAD_ESTADUAL' => '',
-        'SISTEMA_CAD_ESTADUAL' =>  '' ,
+        'SISTEMA_CAD_ESTADUAL' => '',
         'IDENTIFICADOR_CAD_ESTADUAL' => '',
         'FLAG_CAD_MUNICIPAL' => '',
         'SISTEMA_CAD_MUNICIPAL' => '',
@@ -33,7 +33,7 @@ return [
         'FLAG_ATUACAO_MUSEUS_MEMORIA' => [],
         'FLAG_ATUACAO_HUMANIDADES' => [],
     ],
-    "fields_cnpj" => [
+    "fields_cnpj" => [ // Campos para CNPJ
         'CNPJ' => [],
         'FLAG_CAD_ESTADUAL' => '',
         'SISTEMA_CAD_ESTADUAL' => '',
@@ -64,7 +64,7 @@ return [
         'FLAG_ATUACAO_MUSEUS_MEMORIA' => [],
         'FLAG_ATUACAO_HUMANIDADES' => [],
     ],
-    "inscricoes_culturais" => [
+    "inscricoes_culturais" => [ // Opções para incrições culturais
         'mapa-cultural' => '',
         'cadastro-municipal' => '',
         'sniic' => '',
@@ -72,21 +72,43 @@ return [
         'sicab' => '',
         'outros' => '',
     ],
-    "category" => [
+    "category" => [ // Categorias
         'com_espaco_fisico' => [],
         'sem_espaco_fisico' => [],
-    ],
-    'atuacoes-culturais' => [
 
-        'artes-cenicas' => [],
+    ],
+    'atuacoes-culturais' => [ // Opções para área de atuações culturais
+        'artes-cenicas' => [
+            'Artes Circenses',
+            'Dança',
+            'Teatro',
+            'Ópera',
+        ],
+        'artes-visuais' => [
+            'Artes Visuais',
+            'Artesanato',
+            'Design',
+            'Fotografia',
+            'Moda',
+        ],
         'audiovisual' => [
             'Audiovisual',
         ],
-        'musica' => [],
-        'artes-visuais' => [],
-        'patrimonio-cultural' => [],
-        'museu-memoria' => [],
-        'humanidades' => [],
+        'humanidades' => [
+            'Literatura',
+        ],
+        'museu-memoria' => [
+            'Museu',
+        ],
+        'musica' => [
+            'Música',
+        ],
+        'patrimonio-cultural' => [
+            'Cultura Popular',
+            'Gastronomia',
+            'Outros',
+            'Patrimônio Cultural',
+        ],
 
     ],
 ];
