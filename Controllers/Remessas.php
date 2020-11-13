@@ -118,10 +118,8 @@ class Remessas extends \MapasCulturais\Controllers\Registration
             ]);
             $registrations = $asIterator ? $query->iterate() : $query->getResult();
         } else {
-            $dql = "SELECT r FROM MapasCulturais\\Entities\\Registration r 
-            JOIN RegistrationPayments\\Payment p WITH r.id = p.registration WHERE 
+            $dql = "SELECT r FROM MapasCulturais\\Entities\\Registration r WHERE 
             r.status > 0 AND 
-            p.status = 0 AND
             r.opportunity = :opportunity";
 
             $query = $app->em->createQuery($dql);
@@ -1261,17 +1259,17 @@ class Remessas extends \MapasCulturais\Controllers\Registration
             'TIPO_MOEDA' => '',
             'USO_BANCO_85' => '',
             'VALOR_INTEIRO' => function ($registrations) use ($detahe1, $app) {
-                $payment = $app->em->getRepository('\\RegistrationPayments\\Payment')->findOneBy([
-                    'registration' => $registrations->id,
-                    'status' => 0,
-                ]);
+                // $payment = $app->em->getRepository('\\RegistrationPayments\\Payment')->findOneBy([
+                //     'registration' => $registrations->id,
+                //     'status' => 0,
+                // ]);
 
-                if(!$payment){
-                    $app->log->info("\n Pagamento nao encontrado");
-                }
+                // if(!$payment){
+                //     $app->log->info("\n Pagamento nao encontrado");
+                // }
 
-                $amount =  preg_replace('/[^0-9]/i', '', $payment->amount);
-                return number_format($amount, 2, '.', '');
+                // $amount =  preg_replace('/[^0-9]/i', '', $payment->amount);
+                return "600";
                 
             },
             'USO_BANCO_88' => '',
