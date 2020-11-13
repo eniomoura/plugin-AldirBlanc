@@ -87,8 +87,7 @@ class Plugin extends \MapasCulturais\Plugin
             'msg_status_notapproved' => env('AB_STATUS_NOTAPPROVED_MESSAGE', 'Não atendeu aos requisitos necessários. Caso não concorde com o resultado, você poderá enviar um novo formulário de solicitação ao benefício - fique atento ao preenchimento dos campos.'), // STATUS_NOTAPPROVED = 3
             'msg_status_waitlist' => env('AB_STATUS_WAITLIST_MESSAGE', 'Os recursos disponibilizados já foram destinados. Para sua solicitação ser aprovada será necessário aguardar possível liberação de recursos. Em caso de aprovação, você também será notificado por e-mail. Consulte novamente em outro momento.'), //STATUS_WAITLIST = 8
 
-            // informacoes para recurso das inscrições com status 2 e 3
-            'email_recurso' => env('AB_EMAIL_RECURSO', ''),
+            // mensagem padão para recurso das inscrições com status 2 e 3
             'msg_recurso' => env('AB_MENSAGEM_RECURSO', ''),
                         
 
@@ -123,6 +122,32 @@ class Plugin extends \MapasCulturais\Plugin
         //     }
         // }
         parent::__construct($config);
+    }
+
+    public function deleteConfigCache() {
+        unlink(PRIVATE_FILES_PATH . 'plugin.AldirBlanc.config.cache.serialized');
+    }
+
+    public function getConfigCache()
+    {
+        $config_cache_filename = PRIVATE_FILES_PATH . 'plugin.AldirBlanc.config.cache.serialized';
+        if (file_exists($config_cache_filename)) {
+            if ($config = unserialize(file_get_contents($config_cache_filename))) {
+                return $config;
+            }
+        }
+
+        return null;
+    }
+
+    public function setConfigCache($config) {
+        $config_cache_filename = PRIVATE_FILES_PATH . 'plugin.AldirBlanc.config.cache.serialized';
+        if ($serialized = serialize($config)) {
+            file_put_contents($config_cache_filename, $serialized);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function configOpportunitiesIds($config)
@@ -401,16 +426,23 @@ class Plugin extends \MapasCulturais\Plugin
                             $can = true;
                         }
                     }
-
+                    
                     if (!$can) {
                         $can_consolidate = false;
                     }
                 }
             }
+            
+            $tem_validacoes = false;
+            foreach ($evaluations as $eval) {
+                if ($eval->user->aldirblanc_validador) {
+                    $tem_validacoes = true;
+                }
+            }
 
             // se não pode consolidar, coloca a string 'homologado'
             if (!$can_consolidate) {
-                if (!$this->consolidatedResult) {
+                if (!$this->consolidatedResult || count($evaluations) <= 1 || !$tem_validacoes) {
                     $result = 'homologado';
                 } else if (strpos($this->consolidatedResult, 'homologado') === false) {
                     $result = "{$this->consolidatedResult}, homologado";
@@ -624,6 +656,14 @@ class Plugin extends \MapasCulturais\Plugin
                 $app->redirect($url);
             }
         });
+
+        /**
+         * Carrega campo adicional "Mensagem de Recurso" nas oportunidades
+         * @return void
+         */
+        $app->hook('view.partial(singles/opportunity-registrations--importexport):before', function () use ($plugin, $app) {
+            $this->part('aldirblanc/status-recurso-fields', ['opportunity' => $this->controller->requestedEntity]);
+        });
         
         $app->hook('view.partial(footer):before', function() use($plugin, $app) {
             if($plugin->config['zammad_enable']) {
@@ -785,6 +825,15 @@ class Plugin extends \MapasCulturais\Plugin
                 // @todo: validação que impede a alteração do valor desse metadado
             ]);
         }
+
+        /**
+         * Registra campo adicional "Mensagem de Recurso" nas oportunidades
+         * @return void
+         */
+        $this->registerMetadata('MapasCulturais\Entities\Opportunity', 'aldirblanc_status_recurso', [
+            'label' => i::__('Mensagem para Recurso na tela de Status'),
+            'type' => 'text'
+        ]);
     }
 
     function json($data, $status = 200)
