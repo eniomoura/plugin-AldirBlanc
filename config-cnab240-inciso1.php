@@ -59,13 +59,13 @@ return [
         ],
         'CPF_CNPJ_FONTE_PAG' => [ //CPF ou CNPJ da fonte pagadora, colocar com base no que foi informado no campo INSCRICAO_TIPO
             'length' => 14,
-            'default' => null,
+            'default' => 32746693000152,
             'field_id' => null,
             'type' => 'int',
         ],
         'CONVENIO_BB1' => [ // Número do convênio da fonte pagadora junto ao BB. Deve-ser verificar com secretaria da cultura
             'length' => 9,
-            'default' => null,
+            'default' => 518502354,
             'field_id' => null,
             'type' => 'int',
         ],
@@ -89,7 +89,7 @@ return [
         ],
         'AGENCIA' => [ //Agência bancária de fonte pagadora
             'length' => 5,
-            'default' => null,
+            'default' => '0086',
             'field_id' => 'mapped',
             'type' => 'int',
         ],
@@ -101,7 +101,7 @@ return [
         ],
         'CONTA' => [ //Conta bancária da fonte pagadora
             'length' => 12,
-            'default' => null,
+            'default' => 20358,
             'field_id' => 'mapped',
             'type' => 'int',
         ],
@@ -119,7 +119,7 @@ return [
         ],
         'NOME_EMPRESA' => [ //Nome da fonte pagadora
             'length' => 30,
-            'default' => null,
+            'default' => 'SECRETARIA DA GULTURA DE GOIAS',
             'field_id' => null,
             'type' => 'string',
         ],
@@ -235,19 +235,19 @@ return [
         ],
         'INSCRICAO_TIPO' => [ // CPF ou CNPJ da entidade pagadora (1 = CPF ou 2 = CNPJ) 
             'length' => 1,
-            'default' => null,
+            'default' => 2,
             'field_id' => null,
             'type' => 'int',
         ],
         'INSCRICAO_NUMERO' => [ //CPF ou CNPJ da fonte pagadora, colocar com base no que foi informado no campo INSCRICAO_TIPO
             'length' => 14,
-            'default' => null,
+            'default' => 32746693000152,
             'field_id' => null,
             'type' => 'int',
         ],        
         'CONVENIO_BB1' => [ // Número do convênio da fonte pagadora junto ao BB. Deve-ser verificar com secretaria da cultura
             'length' => 9,
-            'default' => null,
+            'default' => 518502354,
             'field_id' => null,
             'type' => 'int',
         ],
@@ -271,13 +271,7 @@ return [
         ],
         'AGENCIA' => [ //Agência bancária de fonte pagadora
             'length' => 5,
-            'default' => null,
-            'field_id' => 'mapped',
-            'type' => 'int',
-        ],
-        'AGENCIA' => [ //Agência bancária de fonte pagadora
-            'length' => 5,
-            'default' => null,
+            'default' => '0086',
             'field_id' => 'mapped',
             'type' => 'int',
         ],
@@ -289,7 +283,7 @@ return [
         ],
         'CONTA' => [ //Conta bancária da fonte pagadora
             'length' => 12,
-            'default' => null,
+            'default' => 20358,
             'field_id' => 'mapped',
             'type' => 'int',
         ],
@@ -307,7 +301,7 @@ return [
         ],
         'NOME_EMPRESA' => [ // Nome da fonte pagadora
             'length' => 30,
-            'default' => null,
+            'default' => 'SECRETARIA DA CULTURA DE GOIAS',
             'field_id' => 'mapped',
             'type' => 'string',
         ],
@@ -319,7 +313,7 @@ return [
         ],
         'LOGRADOURO' => [ // Logradouro do endereço da fonte pagadora
             'length' => 30,
-            'default' => null,
+            'default' => 'PC DR PEDRO LUDOVICO TEIXEIRA',
             'field_id' => null,
             'type' => 'string',
         ],
@@ -331,25 +325,25 @@ return [
         ],
         'COMPLEMENTO' => [ // Complemento do endereço da fonte pagadora
             'length' => 15,
-            'default' => null,
+            'default' => '2',
             'field_id' => null,
             'type' => 'string',
         ],
         'CIDADE' => [ // Cidade do endereço da fonte pagadora
             'length' => 20,
-            'default' => null,
+            'default' => 'GOIANIA',
             'field_id' => null,
             'type' => 'string',
         ],
         'CEP' => [  // CEP do endereço da fonte pagadora
             'length' => 8,
-            'default' => null,
+            'default' => '74003010',
             'field_id' => null,
             'type' => 'int',
         ],
         'ESTADO' => [  // Estado do endereço da fonte pagadora
             'length' => 2,
-            'default' => null,
+            'default' => 'GO',
             'field_id' => null,
             'type' => 'string',
         ],
@@ -418,31 +412,31 @@ return [
         'BEN_CODIGO_BANCO' => [ // Field_id do campo da instituição bancária do beneficiário
             'length' => 3,
             'default' => null,
-            'field_id' => null,
+            'field_id' => 3,
             'type' => 'int',
         ],
         'BEN_AGENCIA' => [ // Field_id  do campo da agência bancária do beneficiário
             'length' => 5,
             'default' => null,
-            'field_id' => null,
+            'field_id' => 23,
             'type' => 'int',
         ],
         'BEN_AGENCIA_DIGITO' => [ // Field_id do campo do dígito da agência bancária do beneficiário
             'length' => 1,
             'default' => null,
-            'field_id' => null,
+            'field_id' => 23,
             'type' => 'int',
         ],
         'BEN_CONTA' => [ // Field_id do campo da conta bancária do beneficiário
             'length' => 12,
             'default' => null,
-            'field_id' => null,
+            'field_id' => 2,
             'type' => 'int',
         ],
         'BEN_CONTA_DIGITO' => [ // Field_id do campo do dígito da conta bancária do beneficiário
             'length' => 1,
             'default' => null,
-            'field_id' => null,
+            'field_id' => 2,
             'type' => 'int',
         ],
         'BEN_DIGITO_CONTA_AGENCIA_80' => [ //Por default manter sempre como null
@@ -454,7 +448,7 @@ return [
         'BEN_NOME' => [ // Field_id do campo nome do beneficiário
             'length' => 30,
             'default' => null,
-            'field_id' => null,
+            'field_id' => 20,
             'type' => 'string',
         ],
         'BEN_DOC_ATRIB_EMPRESA_82' => [ //por default sempre deixar null
@@ -526,7 +520,7 @@ return [
         'TIPO_CONTA' => [ // Field_id do campo que contenha o tipo de conta do benefíciario, (Corrente, Poupança)
             'length' => 11,
             'default' => null,
-            'field_id' => null,
+            'field_id' => 4,
             'type' => 'int',
         ]
         
@@ -578,7 +572,7 @@ return [
         'BEN_CPF' => [ // Field_id do campo do CPF ou CNPJ do beneficiário, se atentar ao respondido no BEN_TIPO_DOC
             'length' => 14,
             'default' => null,
-            'field_id' => null,
+            'field_id' => 25,
             'type' => 'int',
         ],
         'BEN_ENDERECO_LOGRADOURO' => [ // Field_id do campo do logradouro do beneficiário
@@ -756,8 +750,8 @@ return [
     ],
     'parameters_default' => [
         'status' => 1,
-        'defaultBank' => false, // caso exista banco padrão para pagamento, alterar flag => (true = sim, false = não);
-        'informDefaultBank' => false, // Caso exista um banco padrão para pagamento, informar numero do banco aqui 
+        'defaultBank' => true, // caso exista banco padrão para pagamento, alterar flag => (true = sim, false = não);
+        'informDefaultBank' => 001, // Caso exista um banco padrão para pagamento, informar numero do banco aqui 
         'typesAccount' => [ //Tipos de contas existentes no formulário
             'corrente' => 'Conta corrente',
             'poupanca' => 'Conta poupança',
@@ -781,27 +775,23 @@ return [
             '9' => '1',
             'X' => '2',
         ],
-        'field_TipoConta' => null,// Field_id que busca o tipo de do benefíciario conta corrente ou poupança
-        'field_banco' => null, // Field_id que busca o banco do benefpiciario
-        'field_agency' => null,
+        'field_TipoConta' => 4,// Field_id que busca o tipo de do benefíciario conta corrente ou poupança
+        'field_banco' => 3, // Field_id que busca o banco do benefpiciario
+        'field_agency' => 23,
         'fieldsWalletDigital' =>[ //Caso exista campos para carteira digital BB, inserir aqui o field_id 
             'agency' => false,
             'account' =>  false
         ],
-        'monoParentIgnore' => true, //caso queira barrar o envio de pessoas monoparentais no arquivo, deixar setado com true, em outros casos setar false
-        'womanMonoParent' => null,
+        'monoParentIgnore' => false, //caso queira barrar o envio de pessoas monoparentais no arquivo, deixar setado com true, em outros casos setar false
+        'womanMonoParent' => 16,
         'deParaContasbb' => '/CSV/deParaContas.csv', // Caso exista um arquivo para captura de contas bancárioas, colocar o aqruivo na raiz AldirBlanc e passar o caminho aqui 
         'typesReceipt'=> [//Faz a separação de bancarizado e desbancarixado, informar segundo campos do formulário
             'banked' => [
                 'Depósito bancário',
-                'CARTEIRA DIGITAL BB'
             ],
             'unbanked' => [
                 'Ordem de pagamento para saque nos caixas da rede 24H',
-                'CONTA BANCÁRIA NO BANCO DO BRASIL ABERTA PELA SECULT-ES'
             ]
         ]
     ],
-    
-    
 ];
