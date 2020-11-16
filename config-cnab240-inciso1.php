@@ -761,7 +761,7 @@ return [
             "unbanked" => true 
         ],
         'selfDeclaredBB' => false, // Preencher esse campo, caso exista a pergunta se o requerente é correntista BB ou Não
-        'formoReceipt' => null, // Campo para informar onde buscar opções de recebimento EX.: CARTEIRA DIGITAL BB ou CONTA BANCÁRIA NO BANCO DO BRASIL ABERTA PELA SECULT-ES
+        'formoReceipt' => 9, // Campo para informar onde buscar opções de recebimento EX.: CARTEIRA DIGITAL BB ou CONTA BANCÁRIA NO BANCO DO BRASIL ABERTA PELA SECULT-ES
         'savingsDigit' => [
             '0' => '3',
             '1' => '4',
