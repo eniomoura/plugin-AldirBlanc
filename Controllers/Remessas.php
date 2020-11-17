@@ -103,9 +103,9 @@ class Remessas extends \MapasCulturais\Controllers\Registration
          */
         if ($startDate && $finishDate) {
             $dql = "SELECT r FROM MapasCulturais\\Entities\\Registration r 
-                    JOIN RegistrationPayments\\Payment p WITH r.id = p.registration_id WHERE 
+                    JOIN RegistrationPayments\\Payment p WITH r.id = p.registration WHERE 
                     r.status > 0 AND
-                    r.opportunity_id = :opportunity AND
+                    r.opportunity = :opportunity AND
                     p.status = 0 AND
                     r.sentTimestamp >=:startDate AND
                     r.sentTimestamp <= :finishDate";
