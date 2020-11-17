@@ -1542,6 +1542,8 @@ class Remessas extends \MapasCulturais\Controllers\Registration
         //Verifica se existe registros em algum dos arrays. Caso não exista exibe a mensagem
         $validaExist = array_merge($recordsBBCorrente, $recordsOthers, $recordsBBPoupanca);
         if(empty($validaExist)){
+            echo '<script>console.log(Registrations: '. json_encode( $registrations ) .')</script>';
+            echo '<script>console.log(No Formoreceipt: '. json_encode( $noFormoReceipt ) .')</script>';
             echo "Não foram encontrados registros analise os logs";
             exit();
         }
