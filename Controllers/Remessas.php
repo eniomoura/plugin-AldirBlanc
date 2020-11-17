@@ -1444,6 +1444,7 @@ class Remessas extends \MapasCulturais\Controllers\Registration
                 if(!$monoParentIgnore){
                     if($value->$womanMonoParent=="SIM"){
                         $app->log->info("\n".$value->number . " - Auto declarada monoparental, configuração setada para ignorar.");
+                        echo '<script>console.log(\'Auto declarada monoparental, configuração setada para ignorar:\'+ \''. json_encode( $value->number ) .'\')</script>';
                         continue;
                     }
                 }
@@ -1458,6 +1459,7 @@ class Remessas extends \MapasCulturais\Controllers\Registration
                 if(!$value->$formoReceipt && $selfDeclaredBB === "NÃO"){                                   
                     $app->log->info("\n".$value->number . " - Forma de recebimento não encontrada.");
                     $noFormoReceipt ++;                   
+                    echo '<script>console.log(\'Forma de recebimento não encontrada:\'+ \''. json_encode( $value->number ) .'\')</script>';
                     continue;
                 }
                 
@@ -1505,12 +1507,12 @@ class Remessas extends \MapasCulturais\Controllers\Registration
                         }
                     }
                 }else{
+                    echo '<script>console.log(\'Não bancarizada:\'+ \''. json_encode( $value->number ) .'\')</script>';
                     continue;
                 
                 }
             }
         }else{
-            echo '<script>console.log("Processing Banked Registration:"+ "'. json_encode( $registrations ) .'")</script>';
             foreach ($registrations as $value) {
                 if ($this->numberBank($value->$field_banco) == "001") {               
                     if ($value->$field_TipoConta == "Conta corrente") {
