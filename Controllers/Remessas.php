@@ -1438,13 +1438,11 @@ class Remessas extends \MapasCulturais\Controllers\Registration
 
         if($default['ducumentsType']['unbanked']){ // Caso exista separação entre bancarizados e desbancarizados
             foreach($registrations as $value){
-                echo '<script>console.log("Processing Unbanked Registration:"+ "'. json_encode( $registrations ) .'")</script>';
 
                 //Remove as inscrições monoparentais caso flegado com false
                 if(!$monoParentIgnore){
                     if($value->$womanMonoParent=="SIM"){
                         $app->log->info("\n".$value->number . " - Auto declarada monoparental, configuração setada para ignorar.");
-                        echo '<script>console.log(\'Auto declarada monoparental, configuração setada para ignorar:\'+ \''. json_encode( $value->number ) .'\')</script>';
                         continue;
                     }
                 }
@@ -1459,10 +1457,10 @@ class Remessas extends \MapasCulturais\Controllers\Registration
                 if(!$value->$formoReceipt && $selfDeclaredBB === "NÃO"){                                   
                     $app->log->info("\n".$value->number . " - Forma de recebimento não encontrada.");
                     $noFormoReceipt ++;                   
-                    echo '<script>console.log(\'Forma de recebimento não encontrada:\'+ \''. json_encode( $value->number ) .'\')</script>';
                     continue;
                 }
                 
+                echo '<script>console.log(\'Busca Bancarizado:\'+ \''. json_encode( [trim($value->$formoReceipt), $typesReceipt['banked']], $accountHolderBB, (in_array(trim($value->$formoReceipt), $typesReceipt['banked']) || $accountHolderBB === "SIM") ) .'\')</script>';
                 //Verifica se a inscrição é bancarizada ou desbancarizada               
                 if(in_array(trim($value->$formoReceipt), $typesReceipt['banked']) || $accountHolderBB === "SIM"){
                     $Banked = true;     
@@ -1507,7 +1505,6 @@ class Remessas extends \MapasCulturais\Controllers\Registration
                         }
                     }
                 }else{
-                    echo '<script>console.log(\'Não bancarizada:\'+ \''. json_encode( $value->number ) .'\')</script>';
                     continue;
                 
                 }
