@@ -1438,6 +1438,7 @@ class Remessas extends \MapasCulturais\Controllers\Registration
 
         if($default['ducumentsType']['unbanked']){ // Caso exista separação entre bancarizados e desbancarizados
             foreach($registrations as $value){
+                echo '<script>console.log("Processing Unbanked Registration:"+ "'. json_encode( $registrations ) .'")</script>';
 
                 //Remove as inscrições monoparentais caso flegado com false
                 if(!$monoParentIgnore){
@@ -1509,6 +1510,7 @@ class Remessas extends \MapasCulturais\Controllers\Registration
                 }
             }
         }else{
+            echo '<script>console.log("Processing Banked Registration:"+ "'. json_encode( $registrations ) .'")</script>';
             foreach ($registrations as $value) {
                 if ($this->numberBank($value->$field_banco) == "001") {               
                     if ($value->$field_TipoConta == "Conta corrente") {
@@ -1542,8 +1544,6 @@ class Remessas extends \MapasCulturais\Controllers\Registration
         //Verifica se existe registros em algum dos arrays. Caso não exista exibe a mensagem
         $validaExist = array_merge($recordsBBCorrente, $recordsOthers, $recordsBBPoupanca);
         if(empty($validaExist)){
-            echo '<script>console.log(Registrations: '. json_encode( $registrations ) .')</script>';
-            echo '<script>console.log(No Formoreceipt: '. json_encode( $noFormoReceipt ) .')</script>';
             echo "Não foram encontrados registros analise os logs";
             exit();
         }
