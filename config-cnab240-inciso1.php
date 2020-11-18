@@ -782,7 +782,7 @@ return [
             'agency' => false,
             'account' =>  false
         ],
-        'monoParentIgnore' => false, //caso queira barrar o envio de pessoas monoparentais no arquivo, deixar setado com true, em outros casos setar false
+        'monoParentIgnore' => true, //caso queira barrar o envio de pessoas monoparentais no arquivo, deixar setado com true, em outros casos setar false
         'womanMonoParent' => 'field_16',
         'deParaContasbb' => '/CSV/deParaContas.csv', // Caso exista um arquivo para captura de contas bancárioas, colocar o aqruivo na raiz AldirBlanc e passar o caminho aqui 
         'typesReceipt'=> [//Faz a separação de bancarizado e desbancarixado, informar segundo campos do formulário
