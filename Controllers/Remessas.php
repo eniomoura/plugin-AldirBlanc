@@ -1460,7 +1460,6 @@ class Remessas extends \MapasCulturais\Controllers\Registration
                     continue;
                 }
                 
-                echo '<script>console.log(\'Busca Bancarizado:\'+ \''. json_encode( [trim($value->$formoReceipt), $typesReceipt['banked'], $accountHolderBB, (in_array(trim($value->$formoReceipt), $typesReceipt['banked']) || $accountHolderBB === "SIM")] ) .'\')</script>';
                 //Verifica se a inscrição é bancarizada ou desbancarizada               
                 if(in_array(trim($value->$formoReceipt), $typesReceipt['banked']) || $accountHolderBB === "SIM"){
                     $Banked = true;     
