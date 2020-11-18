@@ -412,7 +412,7 @@ return [
         'BEN_CODIGO_BANCO' => [ // Field_id do campo da instituição bancária do beneficiário
             'length' => 3,
             'default' => null,
-            'field_id' => 3,
+            'field_id' => 'field_3',
             'type' => 'int',
         ],
         'BEN_AGENCIA' => [ // Field_id  do campo da agência bancária do beneficiário
@@ -448,7 +448,7 @@ return [
         'BEN_NOME' => [ // Field_id do campo nome do beneficiário
             'length' => 30,
             'default' => null,
-            'field_id' => 20,
+            'field_id' => 'field_20',
             'type' => 'string',
         ],
         'BEN_DOC_ATRIB_EMPRESA_82' => [ //por default sempre deixar null
@@ -520,7 +520,7 @@ return [
         'TIPO_CONTA' => [ // Field_id do campo que contenha o tipo de conta do benefíciario, (Corrente, Poupança)
             'length' => 11,
             'default' => null,
-            'field_id' => 4,
+            'field_id' => 'field_4',
             'type' => 'int',
         ]
         
@@ -572,7 +572,7 @@ return [
         'BEN_CPF' => [ // Field_id do campo do CPF ou CNPJ do beneficiário, se atentar ao respondido no BEN_TIPO_DOC
             'length' => 14,
             'default' => null,
-            'field_id' => 25,
+            'field_id' => 'field_25',
             'type' => 'int',
         ],
         'BEN_ENDERECO_LOGRADOURO' => [ // Field_id do campo do logradouro do beneficiário
