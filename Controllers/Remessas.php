@@ -2926,7 +2926,7 @@ class Remessas extends \MapasCulturais\Controllers\Registration
 
         //Verifica se o arquivo existe
         if(!file_exists($filename)){
-            return false;
+            return [];
         }
 
         $data = [];
