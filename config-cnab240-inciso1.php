@@ -265,7 +265,7 @@ return [
         ],
         'CONVENIO_BB4' => [ // Campo dedicado a testes, Em teoria quando um arquivo for enviado ao BB como TESTE deve-se insetir as letras TS na chave default do array
             'length' => 2,
-            'default' => null,
+            'default' => 'TS',
             'field_id' => null,
             'type' => 'string',
         ],
