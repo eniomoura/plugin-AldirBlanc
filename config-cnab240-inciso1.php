@@ -761,7 +761,7 @@ return [
             "unbanked" => true 
         ],
         'selfDeclaredBB' => false, // Preencher esse campo, caso exista a pergunta se o requerente é correntista BB ou Não
-        'formoReceipt' => 9, // Campo para informar onde buscar opções de recebimento EX.: CARTEIRA DIGITAL BB ou CONTA BANCÁRIA NO BANCO DO BRASIL ABERTA PELA SECULT-ES
+        'formoReceipt' => 'field_9', // Campo para informar onde buscar opções de recebimento EX.: CARTEIRA DIGITAL BB ou CONTA BANCÁRIA NO BANCO DO BRASIL ABERTA PELA SECULT-ES
         'savingsDigit' => [
             '0' => '3',
             '1' => '4',
@@ -775,15 +775,15 @@ return [
             '9' => '1',
             'X' => '2',
         ],
-        'field_TipoConta' => 4,// Field_id que busca o tipo de do benefíciario conta corrente ou poupança
-        'field_banco' => 3, // Field_id que busca o banco do benefpiciario
-        'field_agency' => 23,
+        'field_TipoConta' => 'field_4',// Field_id que busca o tipo de do benefíciario conta corrente ou poupança
+        'field_banco' => 'field_3', // Field_id que busca o banco do benefpiciario
+        'field_agency' => 'field_23',
         'fieldsWalletDigital' =>[ //Caso exista campos para carteira digital BB, inserir aqui o field_id 
             'agency' => false,
             'account' =>  false
         ],
         'monoParentIgnore' => false, //caso queira barrar o envio de pessoas monoparentais no arquivo, deixar setado com true, em outros casos setar false
-        'womanMonoParent' => 16,
+        'womanMonoParent' => 'field_16',
         'deParaContasbb' => '/CSV/deParaContas.csv', // Caso exista um arquivo para captura de contas bancárioas, colocar o aqruivo na raiz AldirBlanc e passar o caminho aqui 
         'typesReceipt'=> [//Faz a separação de bancarizado e desbancarixado, informar segundo campos do formulário
             'banked' => [
