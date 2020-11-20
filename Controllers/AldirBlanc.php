@@ -628,7 +628,13 @@ class AldirBlanc extends \MapasCulturais\Controllers\Registration
             $app->redirect($this->createUrl('status', [$registration->id]));
         }
         $registration->checkPermission('modify');
-        
+        $ignoreDates = $this->config['mediadores_prolongar_tempo'] && $app->user->is('mediador');
+        $now = new \DateTime('now');
+        $notInTime = ($registration->opportunity->registrationFrom > $now || $registration->opportunity->registrationTo < $now );
+        $showDraft = !($notInTime && !$ignoreDates);
+        if (!$showDraft){
+            $app->redirect($this->createUrl('cadastro'));
+        }
         if (!$registration->termos_aceitos) {
             if ($app->user->is('mediador')) {
                 $this->GET_aceitar_termos();
@@ -935,6 +941,26 @@ class AldirBlanc extends \MapasCulturais\Controllers\Registration
         $this->plugin->createOpportunityInciso2();
 
         $this->json("Sucesso");
+    }
+
+    //Atualiza roles dos mediadores a partir da lista da configuração 
+    function GET_atualizarmediadores() {
+        $this->requireAuthentication();
+
+        $app = App::i();
+
+        if(!$app->user->is('admin')) {
+            $this->errorJson('Permissao negada', 403);
+        }
+        
+        set_time_limit(0);
+        $mediadores = $this->config['lista_mediadores'];
+        $emails = array_keys($mediadores);
+        $users = $app->repo('User')->findBy(['email' => $emails]);
+        foreach ($users as $u){
+            $u->addRole('mediador');
+        }
+        $this->json($users);
     }
 
 
