@@ -60,6 +60,7 @@ class Plugin extends \MapasCulturais\Plugin
             'lista_mediadores' => (array) json_decode(env('AB_OPORTUNIDADES_MEDIADORES', '[]')),
             'mediadores_prolongar_tempo' => env('AB_MEDIADORES_PROLONGAR_TEMPO', false),
             'texto_cadastro_cnpj'  => env('AB_TXT_CADASTRO_CNPJ', 'Entidade, empresa ou cooperativa do setor cultural com inscrição em CNPJ.'),            
+            'csv_generic_inciso1' => require_once env('AB_CSV_GENERIC_INCISO1', __DIR__ . '/config-csv-generic-inciso1.php'),
             'csv_generic_inciso2' => require_once env('AB_CSV_GENERIC_INCISO2', __DIR__ . '/config-csv-generic-inciso2.php'),
             'csv_generic_inciso3' => require_once env('AB_CSV_GENERIC_INCISO3', __DIR__ . '/config-csv-generic-inciso3.php'),
             'config-cnab240-inciso1' => require_once env('AB_TXT_CANAB240_INCISO1', __DIR__ . '/config-cnab240-inciso1.php'),
