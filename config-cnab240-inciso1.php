@@ -750,8 +750,8 @@ return [
     ],
     'parameters_default' => [
         'status' => 1,
-        'defaultBank' => true, // caso exista banco padrão para pagamento, alterar flag => (true = sim, false = não);
-        'informDefaultBank' => 001, // Caso exista um banco padrão para pagamento, informar numero do banco aqui 
+        'defaultBank' => false, // caso exista banco padrão para pagamento, alterar flag => (true = sim, false = não);
+        'informDefaultBank' => '001', // Caso exista um banco padrão para pagamento, informar numero do banco aqui 
         'typesAccount' => [ //Tipos de contas existentes no formulário
             'corrente' => 'Conta corrente',
             'poupanca' => 'Conta poupança',
