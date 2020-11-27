@@ -3361,7 +3361,10 @@ class Remessas extends \MapasCulturais\Controllers\Registration
             'PAGSEGURO' => '290',
             'BCO SANTANDER (BRASIL) S.A' => '033',
             'BCO DO EST. DO PA S.A' => '037',
-            'BCO C6 S.A' => '336'
+            'BCO C6 S.A' => '336',
+            'BCO COOPERATIVO SICREDI S.A' => '748',
+            'Bco Do Brasil S.A' => '001',
+            'BCO VOTORANTIM S.A'=> '655',
 
         ];
 
