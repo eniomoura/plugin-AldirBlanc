@@ -1905,7 +1905,7 @@ class Remessas extends \MapasCulturais\Controllers\Registration
                 $data = $registrations->$field_id;
                 $result = $data['En_CEP'];
                 
-                $result = substr($result, 0, $length);
+                $result = substr($result, 0, $length + 1);
 
                 return $result;
             },
