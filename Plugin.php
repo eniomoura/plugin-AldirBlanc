@@ -219,6 +219,24 @@ class Plugin extends \MapasCulturais\Plugin
             // $app->view->enqueueStyle('app','chat','chat.css');
         }
 
+        // reordena avaliações antes da reconsolidação, colocando as que tem id = registration_id no começo, 
+        // pois indica que foram importadas
+        $app->hook('controller(opportunity).reconsolidateResult', function($opportunity, &$evaluations) {
+
+            usort($evaluations, function($a,$b) {
+                if(preg_replace('#[^\d]+#', '', $a['number']) == $a['id']) {
+                    return -1;
+                } else if(preg_replace('#[^\d]+#', '', $b['number']) == $b['id']) {
+                    return 1;
+                } else {
+                    $_a = (int) $a['id'];
+                    $_b = (int) $b['id'];
+                    return $_a <=> $_b;
+                }
+            });
+
+        });
+
          //Botão exportador CNAB240 BB
          $app->hook('template(opportunity.single.header-inscritos):end', function () use($plugin, $app){
             $inciso1Ids = [$plugin->config['inciso1_opportunity_id']];
@@ -228,8 +246,9 @@ class Plugin extends \MapasCulturais\Plugin
             $requestedOpportunity = $this->controller->requestedEntity; //Tive que chamar o controller para poder requisitar a entity
             $opportunity = $requestedOpportunity->id;            
             
-
+            $selectList = false;            
             if(($requestedOpportunity->canUser('@control')) && in_array($requestedOpportunity->id,$opportunities_ids) ) {
+                $selectList = true;
                 $app->view->enqueueScript('app', 'aldirblanc', 'aldirblanc/app.js');
                 if (in_array($requestedOpportunity->id, $inciso1Ids)){
                     $inciso = 1;
@@ -242,7 +261,7 @@ class Plugin extends \MapasCulturais\Plugin
                     $inciso = 3;
 
                 }
-                $this->part('aldirblanc/cnab240-button', ['inciso' => $inciso, 'opportunity' => $opportunity]);
+                $this->part('aldirblanc/cnab240-txt-button', ['inciso' => $inciso, 'opportunity' => $opportunity, 'selectList' => $selectList]);
             }
         });
 
@@ -406,8 +425,9 @@ class Plugin extends \MapasCulturais\Plugin
             $opportunities_ids = array_merge($inciso1Ids, $inciso2Ids, $inciso3Ids);
             $requestedOpportunity = $this->controller->requestedEntity; //Tive que chamar o controller para poder requisitar a entity
             $opportunity = $requestedOpportunity->id;
-            
+            $selectList = false;
             if(($requestedOpportunity->canUser('@control')) && in_array($requestedOpportunity->id,$opportunities_ids) ) {
+                $selectList = true;
                 $app->view->enqueueScript('app', 'aldirblanc', 'aldirblanc/app.js');
                 if (in_array($requestedOpportunity->id, $inciso1Ids)){
                     $inciso = 1;
@@ -418,7 +438,7 @@ class Plugin extends \MapasCulturais\Plugin
                 else if (in_array($requestedOpportunity->id, $inciso3Ids)){
                     $inciso = 3;
                 }
-                $this->part('aldirblanc/csv-generic-button', ['inciso' => $inciso, 'opportunity' => $opportunity]);
+                $this->part('aldirblanc/csv-generic-button', ['inciso' => $inciso, 'opportunity' => $opportunity, 'selectList'=> $selectList]);
             }
         });
 
@@ -428,16 +448,9 @@ class Plugin extends \MapasCulturais\Plugin
          * @TODO: implementar para método de avaliaçào documental
          */
         $app->hook('entity(Registration).consolidateResult', function(&$result, $caller) use($plugin, $app) {
-            // eval(\psy\sh());
             // só aplica o hook para as oportunidades do inciso I e II
-            $ids = [];
-            if ($plugin->config['inciso2_enabled']) {
-                $ids = $plugin->config['inciso2_opportunity_ids'];
-            }
-            
-            if ($plugin->config['inciso1_enabled']) {
-                $ids[] = $plugin->config['inciso1_opportunity_id'];
-            }
+            $ids = $plugin->config['inciso2_opportunity_ids'] ?: [];
+            $ids[] = $plugin->config['inciso1_opportunity_id'];
 
             if (!in_array($this->opportunity->id, $ids)) {
                 return;
@@ -448,6 +461,21 @@ class Plugin extends \MapasCulturais\Plugin
                 return;
             }
 
+            $evaluations = $app->repo('RegistrationEvaluation')->findBy(['registration' => $this, 'status' => 1]);
+
+            $result = $caller->result;
+            
+            foreach ($evaluations as $eval) {
+                if ($eval->user->aldirblanc_avaliador) {
+                    continue;
+                }
+
+                if(intval($eval->result) < intval($result)) {
+                    $result = "$eval->result";
+                }
+            }
+
+            
             // se a consolidação não é para selecionada (statu = 10) pode continuar
             if ($result != '10') {
                 return;
@@ -455,7 +483,6 @@ class Plugin extends \MapasCulturais\Plugin
 
             $can_consolidate = true;
 
-            $evaluations = $app->repo('RegistrationEvaluation')->findBy(['registration' => $this, 'status' => 1]);
 
             /**
              * Se a consolidação requer validações, verifica se existe alguma
@@ -488,7 +515,7 @@ class Plugin extends \MapasCulturais\Plugin
                 if (!$this->consolidatedResult || count($evaluations) <= 1 || !$tem_validacoes) {
                     $result = 'homologado';
                 } else if (strpos($this->consolidatedResult, 'homologado') === false) {
-                    $result = "{$this->consolidatedResult}, homologado";
+                    $result = "homologado, {$this->consolidatedResult}";
                 } else {
                     $result = $this->consolidatedResult;
                 }
@@ -882,6 +909,13 @@ class Plugin extends \MapasCulturais\Plugin
         $this->registerMetadata('MapasCulturais\Entities\Opportunity', 'aldirblanc_status_recurso', [
             'label' => i::__('Mensagem para Recurso na tela de Status'),
             'type' => 'text'
+        ]);
+        // metadados do agente para processos de abertura de conta
+        $this->registerMetadata('MapasCulturais\Entities\Agent',
+                                'account_creation', [
+            'label' => i::__('Dados para abertura de conta'),
+            'type' => 'json',
+            'private' => true,
         ]);
     }
 
