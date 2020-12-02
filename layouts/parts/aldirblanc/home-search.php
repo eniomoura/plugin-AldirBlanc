@@ -5,5 +5,5 @@
         <?= $texto ?>
     </p>
     
-    <a class="btn btn-accent btn-large" href="<?php echo $app->createUrl('aldirblanc') ?>"><?= $botao ?></a>
+    <a style="visibility:hidden;" class="btn btn-accent btn-large" href="<?php echo $app->createUrl('aldirblanc') ?>"><?= $botao ?></a>
 </div>

@@ -621,7 +621,7 @@ class Plugin extends \MapasCulturais\Plugin
             $texto = $plugin->config['texto_home'];
             $botao = $plugin->config['botao_home'];
             $titulo = $plugin->config['titulo_home'];
-            $this->part('aldirblanc/home-search', ['texto' => $texto, 'titulo' => $titulo]);
+            $this->part('aldirblanc/home-search', ['texto' => $texto, 'botao' => $botao, 'titulo' => $titulo]);
         });
 
         /**
