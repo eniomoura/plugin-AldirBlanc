@@ -53,7 +53,7 @@ abstract class PluginValidador extends \MapasCulturais\Plugin
         $app = App::i();
 
         $app->hook('slim.before', function () use ($app) {
-            $this->createUserIfNotExists();
+            // $this->createUserIfNotExists();
         });
 
         $plugin = $this;
