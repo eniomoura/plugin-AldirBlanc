@@ -2000,11 +2000,11 @@ class Remessas extends \MapasCulturais\Controllers\Registration
                 
                 //Verifica se a inscrição é bancarizada ou desbancarizada               
                 if(in_array(trim($value->$formoReceipt), $typesReceipt['banked']) || $accountHolderBB === "SIM"){
-                    $Banked = true;     
+                    $Banked = false; //invertido para n bancarizado     
                     $countBanked ++;
 
                 }else if(in_array(trim($value->$formoReceipt) , $typesReceipt['unbanked']) || $accountHolderBB === "NÃO"){
-                    $Banked = false;
+                    $Banked = true; //invertido para n bancarizado
                     $countUnbanked ++; 
                                
                 }
