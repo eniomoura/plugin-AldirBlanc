@@ -191,7 +191,7 @@ abstract class PluginValidador extends \MapasCulturais\Plugin
                 
                 $user = $plugin->getUser();
                 if (!in_array($opportunity->id, $user->aldirblanc_avaliador)) {
-                    $plugin->makeUserEvaluatorIn($opportunity);
+                    // $plugin->makeUserEvaluatorIn($opportunity);
                 }
             }
         });
