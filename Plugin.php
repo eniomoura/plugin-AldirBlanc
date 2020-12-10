@@ -4,6 +4,7 @@ namespace AldirBlanc;
 
 use MapasCulturais\App;
 use MapasCulturais\Definitions\Role;
+use MapasCulturais\Entities\Registration;
 use MapasCulturais\i;
 
 // @todo refatorar autoloader de plugins para resolver classes em pastas
@@ -219,6 +220,18 @@ class Plugin extends \MapasCulturais\Plugin
             // $app->view->enqueueStyle('app','chat','chat.css');
         }
 
+        // adiciona informações do status das validações ao formulário de avaliação
+        $app->hook('template(registration.view.evaluationForm.simple):before', function(Registration $registration, $opportunity) use($plugin, $app) {
+            $inciso1Ids = [$plugin->config['inciso1_opportunity_id']];
+            $inciso2Ids = array_values($plugin->config['inciso2_opportunity_ids']);
+            $opportunities_ids = array_merge($inciso1Ids, $inciso2Ids);
+            if (in_array($opportunity->id, $opportunities_ids) && $registration->consolidatedResult) {
+                $em = $registration->getEvaluationMethod();
+                $result = $em->valueToString($registration->consolidatedResult);
+                echo "<div class='alert warning'> Status das avaliações: <strong>{$result}</strong></div>";
+            }
+        });
+
         // reordena avaliações antes da reconsolidação, colocando as que tem id = registration_id no começo, 
         // pois indica que foram importadas
         $app->hook('controller(opportunity).reconsolidateResult', function($opportunity, &$evaluations) {
@@ -391,7 +404,7 @@ class Plugin extends \MapasCulturais\Plugin
                 }
             }
         });
-       
+
         // botão exportadores desbancarizados
         $app->hook('template(opportunity.single.header-inscritos):end', function () use($plugin, $app) {
             // condiciona exibição do botão a uma configuração
@@ -412,6 +425,7 @@ class Plugin extends \MapasCulturais\Plugin
                     'inciso' => 1,
                     'opportunity' => $opportunity,
                     'exports' => $plugin->config['exporta_desbancarizados'],
+                    'selectList' => true,
                 ]);
             }
             return;
@@ -439,6 +453,14 @@ class Plugin extends \MapasCulturais\Plugin
                     $inciso = 3;
                 }
                 $this->part('aldirblanc/csv-generic-button', ['inciso' => $inciso, 'opportunity' => $opportunity, 'selectList'=> $selectList]);
+            }
+        });
+
+        // uploads de desbancarizados
+        $app->hook('template(opportunity.<<single|edit>>.sidebar-right):end', function () {
+            $opportunity = $this->controller->requestedEntity;
+            if ($opportunity->canUser('@control')) {
+                $this->part('aldirblanc/bankless-uploads', ['entity' => $opportunity]);
             }
         });
 
@@ -798,7 +820,7 @@ class Plugin extends \MapasCulturais\Plugin
         $app->registerFileGroup('aldirblanc', $def_autorizacao);
         $app->registerFileGroup('aldirblanc', $def_documento);
 
-        // registrinado metadados do usuário
+        // registrinado metadados
         $this->registerMetadata('MapasCulturais\Entities\Registration', 'mediacao_contato_tipo', [
             'label' => i::__('Tipo de contato da mediação'),
             'type' => 'select',
@@ -808,6 +830,19 @@ class Plugin extends \MapasCulturais\Plugin
                 'whatsapp' => i::__('Whatsapp'),
                 'sms' => i::__('SMS'),
             ]
+        ]);
+
+        $this->registerMetadata('MapasCulturais\Entities\Registration', 'lab_sent_emails', [
+            'label' => i::__('E-mails enviados'),
+            'type' => 'json',
+            'private' => true,
+            'default' => '[]'
+        ]);
+
+        $this->registerMetadata('MapasCulturais\Entities\Registration', 'lab_last_email_status', [
+            'label' => i::__('Status do último e-mail enviado'),
+            'type' => 'integer',
+            'private' => true
         ]);
 
         $this->registerMetadata('MapasCulturais\Entities\Registration', 'mediacao_contato', [
@@ -917,6 +952,24 @@ class Plugin extends \MapasCulturais\Plugin
             'type' => 'json',
             'private' => true,
         ]);
+        // metadados da oportunidade para suporte a arquivos de desbancarizados
+        $this->registerMetadata('MapasCulturais\Entities\Opportunity',
+                                'bankless_processed_files', [
+            'label' => 'Arquivos de Desbancarizados Processados',
+            'type' => 'json',
+            'private' => true,
+            'default_value' => '{}',
+        ]);
+        // FileGroup para os arquivos de desbancarizados
+        $defBankless = new \MapasCulturais\Definitions\FileGroup(
+            "bankless",
+            ["^text/plain$", "^application/octet-stream$"],
+            "O arquivo enviado não é um retorno de desbancarizados.",
+            false,
+            null,
+            true
+        );
+        $app->registerFileGroup("opportunity", $defBankless);
     }
 
     function json($data, $status = 200)
