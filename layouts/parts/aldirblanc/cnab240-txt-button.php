@@ -39,7 +39,17 @@ if($inciso == 1){
             <?php } ?>       
         </div>
 
+        <b>Escolha o tipo de lote que deseja exportar</b> <br>
+        <select name="typeLote" id="typeLote">
+            <option value="all">Todos os lotes</option>
+            <option value="lotBBCorrente">Lote corrente BB</option>
+            <option value="lotBBPoupanca">Lote poupança BB</option>
+            <option value="lotOthers">Lote outros bancos</option>
+        </select>     
+        <b>Escolha o tipo de arquivo deseja exportar</b> <br>
         <input type="hidden" name="opportunity" value="<?=$opportunity?>">
+        <input type="radio" name="typeFile" value="TS" title=""> Gerar arquivo para teste TS</br>
+        <input type="radio" name="typeFile" title="" checked> Gerar arquivo para pagamento</br>
         <p><span style="color: red;">*</span> Obrigatório informar data de pagamento</p>
         <button class="btn btn-primary download" name = "cnab240" value="cnab240" type="submit">Exportar</button>
     </form>

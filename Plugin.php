@@ -6,6 +6,7 @@ use MapasCulturais\App;
 use MapasCulturais\Definitions\Role;
 use MapasCulturais\Entities\Registration;
 use MapasCulturais\i;
+use MapasCulturais\Definitions\FileGroup;
 
 // @todo refatorar autoloader de plugins para resolver classes em pastas
 require_once 'Controllers/AldirBlanc.php';
@@ -49,6 +50,7 @@ class Plugin extends \MapasCulturais\Plugin
             'msg_inciso1_disabled' => env('AB_INCISO1_DISABLE_MESSAGE','Em breve!'),
             'msg_inciso2_disabled' => env('AB_INCISO2_DISABLE_MESSAGE','A solicitação deste benefício será lançada em breve. Acompanhe a divulgação pelas instituições responsáveis pela gestão da cultura em seu município!'),
             'link_suporte' => env('AB_LINK_SUPORTE',null),
+            'link_suporte_no_footer' => env('AB_LINK_SUPORTE',false),
             'privacidade_termos_condicoes' => env('AB_PRIVACIDADE_TERMOS',null),
             'mediados_owner' => env('AB_MEDIADOS_OWNER',''),
             'texto_categoria_espaco-formalizado' => env('AB_TXT_CAT_ESPACO_FORMALIZADO', '<strong>Entidade, empresa ou cooperativa do setor cultural com inscrição em CNPJ</strong> para espaço do tipo <strong>Espaço físico próprio, alugado, itinerante, público cedido em comodato, emprestado ou de uso compartilhado</strong>.' ),
@@ -66,6 +68,7 @@ class Plugin extends \MapasCulturais\Plugin
             'csv_generic_inciso3' => require_once env('AB_CSV_GENERIC_INCISO3', __DIR__ . '/config-csv-generic-inciso3.php'),
             'config-cnab240-inciso1' => require_once env('AB_TXT_CANAB240_INCISO1', __DIR__ . '/config-cnab240-inciso1.php'),
             'config-cnab240-inciso2' => require_once env('AB_TXT_CANAB240_INCISO2', __DIR__ . '/config-cnab240-inciso2.php'),
+            'config-import-cnab240' => require_once env('AB_IMPORT_CANB240', __DIR__ . '/config-import-cnab240.php'),
 
             'prefix_project' =>  env('AB_GERADOR_PROJECT_PREFIX', 'Lei Aldir Blanc - Inciso II | '),
             'config-mci460' => require_once env('AB_CONFIG_MCI460', __DIR__ . '/config-mci460.php'),
@@ -80,6 +83,9 @@ class Plugin extends \MapasCulturais\Plugin
             'exibir_resultado_dataprev' => (array) json_decode(env('AB_EXIBIR_RESULTADO_DATAPREV', '[]')),
             'exibir_resultado_generico' => (array) json_decode(env('AB_EXIBIR_RESULTADO_GENERICO', '[]')),
             'exibir_resultado_avaliadores' => (array) json_decode(env('AB_EXIBIR_RESULTADO_AVALIADORES', '["10"]')),
+
+            // array com id dos usuários para não exibir mensagens das avaliações
+            'nao_exibir_resultados' => (array) json_decode(env('AB_NAO_EXIBIR_RESULTADOS', '[]')),
 
             // mensagens de status padrao
             'msg_status_sent' => env('AB_STATUS_SENT_MESSAGE', 'Consulte novamente em outro momento. Você também receberá o resultado da sua solicitação por e-mail.'), // STATUS_SENT = 1
@@ -111,6 +117,42 @@ class Plugin extends \MapasCulturais\Plugin
             //pre inscrições
              'oportunidades_desabilitar_envio' => (array) json_decode(env('AB_OPORTUNIDADES_DESABILITAR_ENVIO', '[]')),
              'mensagens_envio_desabilitado' => (array) json_decode(env('AB_MENSAGENS_ENVIO_DESABILITADO', '[]')),
+
+             'dados_bancarios_inciso1_fields' => [
+                'banco' => '',
+                'agencia' => '',
+                'conta' => '',
+                'agencia_dv' => '',
+                'conta_dv' => '',
+                'conta_tipo' => '',
+             ],
+
+             'mapeamento_bancos' => [
+                'Inexistente' => '1365'
+                // 'CAIXA ECONOMICA FEDERAL' =>  '104',
+                // 'BANCO DO BRASIL S.A' => '001',
+                // 'ITAÚ UNIBANCO S.A..' => '341',
+                // 'BCO BRADESCO S.A' => '237',
+                // 'BCO SANTANDER (BRASIL) S.A' => '033'
+             ],
+
+             'ppg_registros' => PRIVATE_FILES_PATH . 'aldirblanc/ppg/registros.csv',
+
+            'relatorios.inciso1.ownerMetadata' => env('AB_RELATORIOS_INCISO1_OWNER_METADATA', 'raca,genero,En_Municipio,En_Bairro'),
+            'relatorios.inciso1.coletivoMetadata' => env('AB_RELATORIOS_INCISO1_COLETIVO_METADATA', ''),
+            'relatorios.inciso1.spaceMetadata' => env('AB_RELATORIOS_INCISO1_SPACE_METADATA', ''),
+
+            'relatorios.inciso2.ownerMetadata' => env('AB_RELATORIOS_INCISO2_OWNER_METADATA', 'raca,genero,En_Municipio,En_Bairro'),
+            'relatorios.inciso2.coletivoMetadata' => env('AB_RELATORIOS_INCISO2_COLETIVO_METADATA', 'En_Municipio,En_Bairro'),
+            'relatorios.inciso2.spaceMetadata' => env('AB_RELATORIOS_INCISO2_SPACE_METADATA', 'En_Municipio,En_Bairro'),
+
+            'relatorios.inciso3.ownerMetadata' => env('AB_RELATORIOS_INCISO3_OWNER_METADATA', 'raca,genero,En_Municipio,En_Bairro'),
+            'relatorios.inciso3.coletivoMetadata' => env('AB_RELATORIOS_INCISO3_COLETIVO_METADATA', 'En_Municipio,En_Bairro'),
+            'relatorios.inciso3.spaceMetadata' => env('AB_RELATORIOS_INCISO3_SPACE_METADATA', 'En_Municipio,En_Bairro'),
+
+            'relatorios.inciso1.registrationFields' => env('AB_RELATORIOS_INCISO1_REGISTRATION_FIELDS', '{}'),
+            'relatorios.inciso2.registrationFields' => env('AB_RELATORIOS_INCISO2_REGISTRATION_FIELDS', '{}'),
+            'relatorios.inciso3.registrationFields' => env('AB_RELATORIOS_INCISO3_REGISTRATION_FIELDS', '{}'),
             
         ];
 
@@ -216,14 +258,38 @@ class Plugin extends \MapasCulturais\Plugin
         $app = App::i();
 
         $plugin = $this;
+
+        $inciso1Ids = [$plugin->config['inciso1_opportunity_id']];
+        $inciso2Ids = array_values($plugin->config['inciso2_opportunity_ids']);
+        $inciso3Ids = array_values($plugin->config['inciso3_opportunity_ids']);
+
+        $opportunities_ids = array_merge($inciso1Ids, $inciso2Ids, $inciso3Ids);
+
         if($plugin->config['zammad_enable']) {
             // $app->view->enqueueStyle('app','chat','chat.css');
         }
 
+        //Insere campo de observações nos modais de pagamento
+        $app->hook('template(opportunity.single.payment-edit-single-modal-metadata):begin', function(){
+            $this->part('aldirblanc/observacoes-pagamento-edit-single');
+        });
+        
+        $app->hook('template(opportunity.single.payment-edit-multiple-modal-metadata):begin', function(){
+            $this->part('aldirblanc/observacoes-pagamento-edit-multiple');
+        });
+
+        $app->hook('template(opportunity.single.payment-create-multiple-modal-metadata):begin', function(){
+            $this->part('aldirblanc/observacoes-pagamento-create-multiple');
+        });
+
+        $app->hook('template(<<*>>.main-footer):begin', function() use($plugin) {
+            if ($plugin->config['link_suporte_no_footer'] && $plugin->config['link_suporte']) {
+                $this->part('aldirblanc/support', ['linkSuporte' => $plugin->config['link_suporte']]);
+            }
+        });
+
         // adiciona informações do status das validações ao formulário de avaliação
-        $app->hook('template(registration.view.evaluationForm.simple):before', function(Registration $registration, $opportunity) use($plugin, $app) {
-            $inciso1Ids = [$plugin->config['inciso1_opportunity_id']];
-            $inciso2Ids = array_values($plugin->config['inciso2_opportunity_ids']);
+        $app->hook('template(registration.view.evaluationForm.simple):before', function(Registration $registration, $opportunity) use($inciso1Ids, $inciso2Ids) {
             $opportunities_ids = array_merge($inciso1Ids, $inciso2Ids);
             if (in_array($opportunity->id, $opportunities_ids) && $registration->consolidatedResult) {
                 $em = $registration->getEvaluationMethod();
@@ -251,34 +317,49 @@ class Plugin extends \MapasCulturais\Plugin
         });
 
          //Botão exportador CNAB240 BB
-         $app->hook('template(opportunity.single.header-inscritos):end', function () use($plugin, $app){
-            $inciso1Ids = [$plugin->config['inciso1_opportunity_id']];
-            $inciso2Ids = array_values($plugin->config['inciso2_opportunity_ids']);
-            $inciso3Ids = [];//$plugin->config['inciso3_opportunity_ids'];
-            $opportunities_ids = array_merge($inciso1Ids, $inciso2Ids, $inciso3Ids);
-            $requestedOpportunity = $this->controller->requestedEntity; //Tive que chamar o controller para poder requisitar a entity
-            $opportunity = $requestedOpportunity->id;            
+         $app->hook('template(opportunity.single.header-inscritos):end', function () use($app, $inciso1Ids, $inciso2Ids){
+            
+            $opportunities_ids = array_merge($inciso1Ids, $inciso2Ids);
+            $opportunity = $this->controller->requestedEntity; //Tive que chamar o controller para poder requisitar a entity
+
+            //Configura em que incisos deve ser exibido o botão do CNAB240. deixar o array vazio para nao exibir
+            $exibirBtnIncisos = [1];            
             
             $selectList = false;            
-            if(($requestedOpportunity->canUser('@control')) && in_array($requestedOpportunity->id,$opportunities_ids) ) {
+            if (in_array($opportunity->id,$opportunities_ids) && $opportunity->canUser('@control')) {
                 $selectList = true;
                 $app->view->enqueueScript('app', 'aldirblanc', 'aldirblanc/app.js');
-                if (in_array($requestedOpportunity->id, $inciso1Ids)){
+
+                if (in_array($opportunity->id, $inciso1Ids)){
                     $inciso = 1;
-
-                }
-                else if (in_array($requestedOpportunity->id, $inciso2Ids)){
+                
+                } else if (in_array($opportunity->id, $inciso2Ids)){
                     $inciso = 2;
-
-                }else if(in_array($requestedOpportunity->id, $inciso3Ids)){
-                    $inciso = 3;
-
                 }
-                $this->part('aldirblanc/cnab240-txt-button', ['inciso' => $inciso, 'opportunity' => $opportunity, 'selectList' => $selectList]);
+
+                if(in_array($inciso, $exibirBtnIncisos)){ //<= Configurar para exibir o botão do CNAB 240
+                    $this->part('aldirblanc/cnab240-txt-button', ['inciso' => $inciso, 'opportunity' => $opportunity->id, 'selectList' => $selectList, 'exibirBtnIncisos' =>$exibirBtnIncisos]);
+                }
             }
         });
 
-        $app->hook('opportunity.registrations.reportCSV', function(\MapasCulturais\Entities\Opportunity $opportunity, $registrations, &$header, &$body) use($app) {
+        // uploads de CSVs 
+        $app->hook('template(opportunity.<<single|edit>>.sidebar-right):end', function () use($app, $inciso1Ids, $inciso2Ids){
+            
+            $opportunities_ids = array_merge($inciso1Ids, $inciso2Ids);
+            $opportunity = $this->controller->requestedEntity; 
+
+            if (in_array($opportunity->id,$opportunities_ids) && $opportunity->canUser('@control')) {
+                $this->part('aldirblanc/cnab240-uploads', ['entity' => $opportunity]);
+            }
+        });
+
+
+        $app->hook('opportunity.registrations.reportCSV', function(\MapasCulturais\Entities\Opportunity $opportunity, $registrations, &$header, &$body) use($app, $opportunities_ids) {
+            if (!in_array($opportunity->id, $opportunities_ids)) {
+                return;
+            }
+
             $em = $opportunity->getEvaluationMethod();
 
             $_evaluations = $app->repo('RegistrationEvaluation')->findBy(['registration' => $registrations]);
@@ -341,7 +422,6 @@ class Plugin extends \MapasCulturais\Plugin
         // modulo de mediacao
         $app->hook('entity(Agent).canUser(<<viewPrivateData>>)', function($user,&$can) use($app){
             
-
             if (isset($_SESSION['mediado_data']) && $user->is('guest') ){
                 $data = $_SESSION['mediado_data'];
                 $data = $_SESSION['mediado_data'];
@@ -360,8 +440,8 @@ class Plugin extends \MapasCulturais\Plugin
                }
             }
         });
+
         $app->hook('entity(Registration).canUser(<<@control|view|viewPrivateData|viewConsolidatedResult>>)', function($user,&$can) use($app){
-            
             if (isset($_SESSION['mediado_data']) && $user->is('guest') ){
                 $data = $_SESSION['mediado_data'];
                 $cpf = $this->owner->getMetadata('documento');
@@ -379,8 +459,6 @@ class Plugin extends \MapasCulturais\Plugin
                     unset( $_SESSION['mediado_data'] );
                 }
             }
-            
-
         });
         // Permite mediadores cadastrar fora do prazo
         $app->hook('entity(Registration).canUser(<<send>>)', function($user,&$can) use($plugin, $app){
@@ -432,15 +510,12 @@ class Plugin extends \MapasCulturais\Plugin
         });
 
         //Botão exportador genérico
-        $app->hook('template(opportunity.single.header-inscritos):end', function () use($plugin, $app){
-            $inciso1Ids = [$plugin->config['inciso1_opportunity_id']];
-            $inciso2Ids = array_values($plugin->config['inciso2_opportunity_ids']);
-            $inciso3Ids = array_values($plugin->config['inciso3_opportunity_ids']);
-            $opportunities_ids = array_merge($inciso1Ids, $inciso2Ids, $inciso3Ids);
+        $app->hook('template(opportunity.single.header-inscritos):end', function () use($app, $inciso1Ids, $inciso2Ids, $inciso3Ids, $opportunities_ids){
+            
             $requestedOpportunity = $this->controller->requestedEntity; //Tive que chamar o controller para poder requisitar a entity
             $opportunity = $requestedOpportunity->id;
             $selectList = false;
-            if(($requestedOpportunity->canUser('@control')) && in_array($requestedOpportunity->id,$opportunities_ids) ) {
+            if (in_array($requestedOpportunity->id,$opportunities_ids) && $requestedOpportunity->canUser('@control')) {
                 $selectList = true;
                 $app->view->enqueueScript('app', 'aldirblanc', 'aldirblanc/app.js');
                 if (in_array($requestedOpportunity->id, $inciso1Ids)){
@@ -457,7 +532,13 @@ class Plugin extends \MapasCulturais\Plugin
         });
 
         // uploads de desbancarizados
-        $app->hook('template(opportunity.<<single|edit>>.sidebar-right):end', function () {
+        $app->hook('template(opportunity.<<single|edit>>.sidebar-right):end', function () use ($plugin) {
+            // condiciona exibição da área de uploads à configuração que controla o botão de exportação
+            if (!isset($plugin->config['exporta_desbancarizados']) ||
+                !is_array($plugin->config['exporta_desbancarizados']) ||
+                empty($plugin->config['exporta_desbancarizados'])) {
+                return;
+            }
             $opportunity = $this->controller->requestedEntity;
             if ($opportunity->canUser('@control')) {
                 $this->part('aldirblanc/bankless-uploads', ['entity' => $opportunity]);
@@ -960,6 +1041,15 @@ class Plugin extends \MapasCulturais\Plugin
             'private' => true,
             'default_value' => '{}',
         ]);
+
+        //Registra o metadado de revisão de CPF
+        $this->registerMetadata('MapasCulturais\Entities\Registration', 'cpf_fix', [
+            'label' => i::__('Revisa formato CPF'),
+            'type' => 'text',
+            'private' => true,
+        ]);
+
+
         // FileGroup para os arquivos de desbancarizados
         $defBankless = new \MapasCulturais\Definitions\FileGroup(
             "bankless",
@@ -970,6 +1060,44 @@ class Plugin extends \MapasCulturais\Plugin
             true
         );
         $app->registerFileGroup("opportunity", $defBankless);
+
+        // metadados da oportunidade para suporte a arquivos importados do CNAB240
+        $this->registerMetadata('MapasCulturais\Entities\Opportunity','cnab240_processed_files', [
+            'label' => 'Arquivos de CNAB240 Processados',
+            'type' => 'json',
+            'private' => true,
+            'default_value' => '{}',
+        ]);
+         // FileGroup para os arquivos do CNAB240
+         $cnab240 = new \MapasCulturais\Definitions\FileGroup(
+            "cnab240",
+            ["^text/plain$", "^application/octet-stream$"],
+            "O arquivo enviado não e um arquivo de retorno CNAB240.",
+            false,
+            null,
+            true
+        );
+        $app->registerFileGroup("opportunity", $cnab240);
+
+         // FileGroup para os arquivos do CNAB240
+         $resumo_cnab = new \MapasCulturais\Definitions\FileGroup(
+            "resumo_cnab",
+            ["^text/plain$", "^application/octet-stream$"],
+            "O arquivo enviado não e um arquivo de resumo CNAB240.",
+            false,
+            null,
+            true
+        );
+        $app->registerFileGroup("opportunity", $resumo_cnab);
+
+
+        // metadados da oportunidade para suporte a arquivos resumos do CNAB240
+        $this->registerMetadata('MapasCulturais\Entities\Opportunity','resumo_cnab240_processed_files', [
+            'label' => 'Arquivos de CNAB240 Processados',
+            'type' => 'json',
+            'private' => true,
+            'default_value' => '{}',
+        ]);
     }
 
     function json($data, $status = 200)
@@ -1381,5 +1509,34 @@ class Plugin extends \MapasCulturais\Plugin
         $app->disableAccessControl();
         $relation->save(true);
         $app->enableAccessControl();
+    }
+
+    function getSenhasPPG($registration_id) {
+        $app = App::i();
+        $filename = $this->config['ppg_registros'];
+
+        $handle = fopen($filename, "r");
+        $result = [];
+        if ($handle) {
+            while (($line = fgets($handle)) !== false) {
+                $_line = explode(',', $line);
+                if (count($_line) == 4 && $_line[0] == $registration_id) {
+                    $payment = $app->repo('RegistrationPayments\Payment')->find($_line[1]);
+                    if($payment->status >= 8) {
+                        $result[] = (object) [
+                            'protocolo' => $_line[2],
+                            'senha' => $_line[3],
+                            'payment' => $payment
+                        ];
+                    }
+                }
+            }
+
+            fclose($handle);
+        } else {
+            throw new \Exception('arquivo de registros do PPG não encontrado');
+        } 
+
+        return $result;
     }
 }
